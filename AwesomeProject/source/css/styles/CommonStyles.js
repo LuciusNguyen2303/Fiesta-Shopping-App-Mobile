@@ -4,10 +4,12 @@ import { StyleSheet } from "react-native";
 import { styleUserAccess } from "./screens/StyleUserAccess";
 import { StyleLogin } from "./screens/StyleLogin";
 import { StyleSignUp } from "./screens/StyleSignUp";
+import { StyleSearchScreen } from "./screens/StyleSearchScreen";
+import { StyleOrderScreen } from "./screens/StyleOrderScreen";
 export const commonStyles = StyleSheet.create({
     container: {
         paddingLeft: 20,
-        paddingRight: 20
+        paddingRight: 20, backgroundColor:'white', height:'100%'
     },
     normalText: {
         fontSize: 15,
@@ -63,5 +65,7 @@ export const commonStyles = StyleSheet.create({
 export const AppStyles = {
     styleUserAccess,
     StyleLogin,
-    StyleSignUp
+    StyleSignUp,
+    StyleSearchScreen,
+    StyleOrderScreen
 }

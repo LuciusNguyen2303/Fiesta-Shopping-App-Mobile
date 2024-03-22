@@ -9,6 +9,7 @@ import Home from "../screens/store/Home";
 import Profile from "../screens/store/Profile";
 import Cart from "../screens/store/Cart";
 import Notified from "../screens/store/Notified";
+import SearchScreen from "../screens/ProductSearch/SearchScreen";
 import { AppContext } from "./AppContext";
 // screen import form...
 const TabNavigator = createBottomTabNavigator();
@@ -70,7 +71,7 @@ const AppNavigator = () => {
     return (
         <>
             {
-                isLogin === false ? <Tab /> : <CloneStack />
+                isLogin === false ? <Tab/> : <CloneStack />
             }
         </>
     )
