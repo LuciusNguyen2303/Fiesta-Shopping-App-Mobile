@@ -1,12 +1,10 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+// import { View, Text } from 'react-native'
+// import React from 'react'
+// import Profile from '../Profile/Profile'
+// const Profile = () => {
+//   return (
+//     <Profile/>
+//   )
+// }
 
-const Profile = () => {
-  return (
-    <View style={{backgroundColor:'white', height:'100%'}}>
-      <Text>Profile</Text>
-    </View>
-  )
-}
-
-export default Profile
+// export default Profile

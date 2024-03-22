@@ -7,6 +7,7 @@ const StyleProfile=StyleSheet.create({
        flexDirection:'column',
        padding:12,
        margin:10,
+       
        borderRadius:10,
        elevation:10,
     },

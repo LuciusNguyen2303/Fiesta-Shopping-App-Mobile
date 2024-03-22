@@ -57,17 +57,18 @@ import { AppContext, AppContextProvider } from './source/util/AppContext';
 import { NavigationContainer } from '@react-navigation/native';
 import AppNavigator from './source/util/AppNavigator';
 import Login from './source/screens/access/Login';
+import XXX from './source/screens/XXX';
+import Language from './source/screens/Profile/Language/Language';
 
 const App = () => {
-  
-  return (
 
+  return (
     <AppContextProvider>
       <NavigationContainer>
         <AppNavigator />
       </NavigationContainer>
     </AppContextProvider>
-
+    // <Language/>
   )
 }
 /* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
