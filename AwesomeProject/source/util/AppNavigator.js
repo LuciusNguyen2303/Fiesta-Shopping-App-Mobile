@@ -6,10 +6,10 @@ import Login from "../screens/access/Login";
 import SignUp from "../screens/access/SignUp";
 import UserAccess from "../screens/access/UserAccess";
 import Home from "../screens/store/Home";
-import Profile from "../screens/store/Profile";
+import Profile from "../screens/Profile/Profile";
 import Cart from "../screens/store/Cart";
 import Notified from "../screens/store/Notified";
-import SearchScreen from "../screens/ProductSearch/SearchScreen";
+import Language from "../screens/Profile/Language/Language";
 import { AppContext } from "./AppContext";
 // screen import form...
 const TabNavigator = createBottomTabNavigator();
@@ -25,7 +25,15 @@ const CloneStack = () => {
         </StackNavigator.Navigator>
     )
 }
-
+const MyProfile = () => {
+    return (
+        <StackNavigator.Navigator screenOptions={{ headerShown: false }} initialRouteName="Profile">
+            <StackNavigator.Screen name="Profile" component={Profile} />
+            <StackNavigator.Screen name="Language" component={Language} />
+            {/* <StackNavigator.Screen name="SignUp" component={SignUp} /> */}
+        </StackNavigator.Navigator>
+    )
+}
 const Tab = () => {
     return (
         <TabNavigator.Navigator
@@ -60,7 +68,7 @@ const Tab = () => {
             })}>
             <TabNavigator.Screen name="Home" component={Home} />
             <TabNavigator.Screen name="Cart" component={Cart} />
-            <TabNavigator.Screen name="Profile" component={Profile} />
+            <TabNavigator.Screen name="Profile" component={MyProfile} />
             <TabNavigator.Screen name="Notified" component={Notified} />
         </TabNavigator.Navigator>
     )
@@ -71,7 +79,7 @@ const AppNavigator = () => {
     return (
         <>
             {
-                isLogin === false ? <Tab/> : <CloneStack />
+                isLogin === false ? <Tab /> : <CloneStack />
             }
         </>
     )
