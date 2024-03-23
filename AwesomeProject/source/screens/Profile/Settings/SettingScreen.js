@@ -10,18 +10,28 @@ import GenderSelection from './gender'
 import { FoundationIcon } from '../../../components/icon/Foundation'
 import { StyleSettingScreen } from './styles'
 import { FontAwesomeIcon } from '../../../components/icon/FontAwesome'
+import { ToggleButton } from './ToggleButton'
 const SettingScreen = () => {
-    const [gender, setGender] = useState(null);
     const [isEnabled, setIsEnabled] = useState(false);
 
     // Gender handler...
+    const [gender, setGender] = useState(null);
     const handleGenderChange = (selectedGender) => {
         setGender(selectedGender);
     };
     // Gender handler
 
     // Dark mode handler...
-    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+    const [isDarkMode, setisDarkMode] = useState('off')
+    const darkModeChange = (selectedCurrentMode) => {
+        setisDarkMode(selectedCurrentMode)
+    }
+    // Dark mode handler
+    // Dark mode handler...
+    const [onNotification, setOnNotification] = useState('off')
+    const NotificationChange = (selectedCurrentMode) => {
+        setOnNotification(selectedCurrentMode)
+    }
     // Dark mode handler
 
     return (
@@ -69,11 +79,10 @@ const SettingScreen = () => {
                             <MySection label={'Notification'} />
                         </View>
                         <View style={[StyleSettingScreen.viewStatus]}>
-                            <Switch
-                                onValueChange={toggleSwitch}
-                                value={isEnabled}
-                                trackColor={{ false: '#000000', true: '#000000' }}
-                                thumbColor={isEnabled ? '#ffffff' : '#ffffff'} />
+                            <Text style={[commonStyles.normalText, { marginTop: 4, fontSize: 11 }]}>
+                                {onNotification}
+                            </Text>
+                            <ToggleButton currentMode={NotificationChange} />
                         </View>
                     </View>
                     <View style={StyleSettingScreen.viewOption}>
@@ -84,11 +93,10 @@ const SettingScreen = () => {
                             <MySection label={'Dark Mode'} />
                         </View>
                         <View style={StyleSettingScreen.viewStatus}>
-                            <Switch
-                                onValueChange={toggleSwitch}
-                                value={isEnabled}
-                                trackColor={{ false: '#000000', true: '#000000' }}
-                                thumbColor={isEnabled ? '#ffffff' : '#ffffff'} />
+                            <Text style={[commonStyles.normalText, { marginTop: 4, fontSize: 11 }]}>
+                                {isDarkMode}
+                            </Text>
+                            <ToggleButton currentMode={darkModeChange} />
                         </View>
                     </View>
                     <View style={StyleSettingScreen.viewOption}>
@@ -99,14 +107,15 @@ const SettingScreen = () => {
                             <MySection label={'Help Center'} />
                         </View>
                         <View style={StyleSettingScreen.viewStatus}>
+                            <View />
                             <MetarialIcon name={'navigate-next'} color={'black'} size={23} />
                         </View>
                     </View>
                 </View>
             </View>
             <View>
-                <TouchableOpacity style={[commonStyles.btnAccess_dark, {flexDirection:'row', alignItems:'center', justifyContent:'center', borderRadius:11}]}>
-                    <MetarialIcon name={'logout'} size={25} color={'white'}/>
+                <TouchableOpacity style={[commonStyles.btnAccess_dark, { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', borderRadius: 11 }]}>
+                    <MetarialIcon name={'logout'} size={25} color={'white'} />
                     <Text style={commonStyles.textBtnAccess_dark}>
                         Log Out
                     </Text>

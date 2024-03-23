@@ -23,7 +23,7 @@ export const StyleSettingScreen = StyleSheet.create({
         flexDirection: 'row', alignItems: 'center', width: '60%'
     },
     viewStatus: {
-        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'
+        flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '25%'
     },
     viewIcon: {
         backgroundColor: '#efefef', padding: 7, borderRadius: 8, marginRight: 20, width:40, height:40, alignItems:'center', justifyContent:'center'
