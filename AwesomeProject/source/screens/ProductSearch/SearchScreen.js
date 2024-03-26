@@ -13,7 +13,8 @@ import { AppStyles } from '../../css/styles/CommonStyles'
 import { MetarialIcon } from '../../components/icon/Material'
 import { commonStyles } from '../../css/styles/CommonStyles'
 import { Star } from './components/star'
-import { data, dataRating, dataDaily } from '../../screens/ProductSearch/components/dataCagtegory'
+import { dataRating, dataDaily } from '../../screens/ProductSearch/components/dataCagtegory'
+import { dataCategory } from '../../components/CategoryList/data'
 import {
     MySection,
     MyTextInput,
@@ -25,9 +26,10 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 // import data from...
 
 import { FontAwesomeIcon } from '../../components/icon/FontAwesome'
+import { List } from '../../components/CategoryList/list'
 // import data from...
 const SearchScreen = (props) => {
-    const [dataCategory, setDataCategory] = useState(data);
+    const [dataCate, setDataCategory] = useState(dataCategory);
     const [dataDailyy, setDataDailyy] = useState(dataDaily);
     //Radio button...
     const [categorySelected, setCategorySelected] = useState('');
@@ -52,28 +54,7 @@ const SearchScreen = (props) => {
             </View>
             <View style={{ marginTop: 20 }}>
                 <MySection label='Categories' />
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 5, marginLeft: -5 }}>
-                    {
-                        Object.keys(dataCategory).length > 0 ?
-                            dataCategory.map(item =>
-                                <TouchableOpacity
-                                    activeOpacity={1}
-                                    onPress={() => setCategorySelected(item.id)}
-                                    style={[
-                                        AppStyles.StyleSearchScreen.listCat,
-                                        { backgroundColor: categorySelected === item.id ? 'black' : 'white' }
-                                    ]}
-                                    key={item.id}>
-                                    <Text
-                                        style={[
-                                            commonStyles.normalText,
-                                            { color: categorySelected === item.id ? 'white' : 'black' }]}>
-                                        {item.name}
-                                    </Text>
-                                </TouchableOpacity>) :
-                            <View />
-                    }
-                </View>
+                <List data={dataCate} style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: 5, marginLeft: -5}}/>
                 <View style={{ marginTop: 20 }}>
                     <MySection label='Price Range' />
                     <Slider
