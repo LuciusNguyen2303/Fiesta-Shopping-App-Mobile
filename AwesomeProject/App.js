@@ -65,7 +65,7 @@ import SettingScreen from './source/screens/Profile/Settings/SettingScreen';
 import Home from './source/screens/Home/Home';
 
 const App = () => {
-  
+
   return (
 
     // <AppContextProvider>
@@ -74,7 +74,7 @@ const App = () => {
     //   </NavigationContainer>
     // </AppContextProvider>
 
-    <SearchScreen/>
+    <SearchScreen />
   )
 }
 /* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's

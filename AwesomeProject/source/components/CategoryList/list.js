@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity } from 'react-native'
 import React, {useState} from 'react'
 import { AppStyles } from '../../css/styles/CommonStyles'
 import { commonStyles } from '../../css/styles/CommonStyles'
-export const List = ({ data, style }) => {
+export const ListCategory = ({ data, style }) => {
     const [categorySelected, setCategorySelected] = useState('');
     return (
         <View style={style}>
