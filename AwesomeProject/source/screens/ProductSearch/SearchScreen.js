@@ -26,7 +26,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 // import data from...
 
 import { FontAwesomeIcon } from '../../components/icon/FontAwesome'
-import { List } from '../../components/CategoryList/list'
+import { ListCagtegory } from '../../components/CategoryList/list'
 // import data from...
 const SearchScreen = (props) => {
     const [dataCate, setDataCategory] = useState(dataCategory);
@@ -54,7 +54,7 @@ const SearchScreen = (props) => {
             </View>
             <View style={{ marginTop: 20 }}>
                 <MySection label='Categories' />
-                <List data={dataCate} style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: 5, marginLeft: -5}}/>
+                <ListCagtegory data={dataCate} style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: 5, marginLeft: -5}}/>
                 <View style={{ marginTop: 20 }}>
                     <MySection label='Price Range' />
                     <Slider
