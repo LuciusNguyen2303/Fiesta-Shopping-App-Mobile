@@ -16,7 +16,7 @@ const OrderScreen = () => {
                 </TouchableOpacity>
             </View>
             <View style={AppStyles.StyleOrderScreen.viewSearchBar}>
-                <SearchTextView width={290} />
+                <SearchTextView width={290} borderWidth={1}/>
                 <TouchableOpacity style={AppStyles.StyleOrderScreen.touchCapture}>
                     <MetarialIcon name='party-mode' size={27} color='white' />
                 </TouchableOpacity>
@@ -56,7 +56,7 @@ const OrderScreen = () => {
                     </View>
                 </View>
             </View>
-            <View style={{marginTop:20}}>
+            <View style={{ marginTop: 20 }}>
                 <MySection label='Order List' />
                 
             </View>

@@ -6,6 +6,7 @@ import { StyleLogin } from "./screens/StyleLogin";
 import { StyleSignUp } from "./screens/StyleSignUp";
 import { StyleSearchScreen } from "./screens/StyleSearchScreen";
 import { StyleOrderScreen } from "./screens/StyleOrderScreen";
+import { StyleHome } from "./screens/StyleHome";
 export const commonStyles = StyleSheet.create({
     container: {
         paddingLeft: 20,
@@ -67,5 +68,6 @@ export const AppStyles = {
     StyleLogin,
     StyleSignUp,
     StyleSearchScreen,
-    StyleOrderScreen
+    StyleOrderScreen,
+    StyleHome
 }
