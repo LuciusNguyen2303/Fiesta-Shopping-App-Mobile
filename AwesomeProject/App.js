@@ -60,6 +60,7 @@ import Login from './source/screens/access/Login';
 import SearchScreen from './source/screens/ProductSearch/SearchScreen';
 import OrderScreen from './source/screens/OrderStatus/OrderScreen';
 import Home from './source/screens/Home/Home';
+import ChatDashboard from './source/screens/Chat/ChatDashboard';
 const App = () => {
   
   return (
@@ -69,7 +70,7 @@ const App = () => {
     //     <AppNavigator />
     //   </NavigationContainer>
     // </AppContextProvider>
-    <Home/>
+    <ChatDashboard/>
   )
 }
 /* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's

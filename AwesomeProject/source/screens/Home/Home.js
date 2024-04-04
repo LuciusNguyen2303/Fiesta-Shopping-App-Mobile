@@ -6,7 +6,7 @@ import { MetarialIcon } from '../../components/icon/Material'
 import { POPPINS_FONT } from '../../css/theme/Theme'
 import { SearchTextView } from '../../components/SearchView/SearchTextView'
 import { dataCategory } from '../../components/CategoryList/data'
-import { ListCagtegory } from '../../components/CategoryList/list'
+import { ListCategory } from '../../components/CategoryList/list'
 import { MySection } from '../../components/textinput/AccessComponents'
 const Home = () => {
     return (
@@ -52,7 +52,7 @@ const Home = () => {
                 <MySection label={'Categories'} />
                 <ScrollView horizontal={true} overScrollMode='never'
                 showsHorizontalScrollIndicator={false} style={{overflow:'visible'}}>
-                    <ListCagtegory data={dataCategory}
+                    <ListCategory data={dataCategory}
                         style={{ flexDirection: 'row', marginTop: 5, marginLeft: -3 }} />
                 </ScrollView>
             </View>
