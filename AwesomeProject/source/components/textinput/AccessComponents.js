@@ -3,8 +3,10 @@ import { TextInput, StyleSheet, Text, View, TouchableOpacity, Modal } from "reac
 import { commonStyles } from "../../css/styles/CommonStyles";
 import { POPPINS_FONT } from "../../css/theme/Theme";
 import { FoundationIcon } from "../icon/Foundation";
+
 import { MetarialIcon } from "../icon/Material";
 import { FontAwesomeIcon } from "../icon/FontAwesome";
+import cutStringIntoEqualParts from "../CreditCard/AccountNumArgo";
 export const MySection = ({ label }) => {
     return <Text style={styles.section}>{label}</Text>
 }

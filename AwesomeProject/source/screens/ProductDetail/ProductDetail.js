@@ -13,7 +13,7 @@ import { POPPINS_FONT } from '../../css/theme/Theme';
 const height = Dimensions.get('screen').height
 const width = Dimensions.get('screen').width;
 
-const App = () => {
+const ProductDetail = () => {
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [header, setHeader] = useState(true);
@@ -48,10 +48,8 @@ const App = () => {
   const Header = (props) => {
     return (
       <View
-
-
       >
-        <View style={[styleCoProdScreen.header, { marginTop: -420 }]}>
+        <View style={[styleCoProdScreen.header, { marginTop: -440 }]}>
 
           <TouchableOpacity style={{ marginLeft: 10 }} onPress={() => console.log("back")}>
             <Icon name="arrow-back-circle" color={"white"} size={50} />
@@ -333,4 +331,4 @@ export const dataSize = [
 ]
 
 
-export default App;
+export default ProductDetail;

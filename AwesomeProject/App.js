@@ -59,16 +59,20 @@ import AppNavigator from './source/util/AppNavigator';
 import Login from './source/screens/access/Login';
 import XXX from './source/screens/XXX';
 import Language from './source/screens/Profile/Language/Language';
-
+import MyCards from './source/screens/Profile/MyCreditCards/MyCards';
+import EditCard from './source/screens/Profile/MyCreditCards/EditCard';
+import ProductDetail from './source/screens/ProductDetail/ProductDetail';
 const App = () => {
 
   return (
-    <AppContextProvider>
-      <NavigationContainer>
-        <AppNavigator />
-      </NavigationContainer>
-    </AppContextProvider>
+    // <AppContextProvider>
+    //   <NavigationContainer>
+    //     <AppNavigator />
+    //   </NavigationContainer>
+    // </AppContextProvider>
     // <Language/>
+    // <MyCards/>
+    <EditCard/>
   )
 }
 /* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
