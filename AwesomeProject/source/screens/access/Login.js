@@ -13,15 +13,43 @@ import {
   LineWithTextBetween
 } from '../../components/textinput/AccessComponents'
 import { MetarialIcon } from '../../components/icon/Material'
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
 const Login = (props) => {
   const { navigation } = props;
   const [isModeApply, setisModeApply] = useState("LIGHT_MODE")
-  const { isLogin, setisLogin } = useContext(AppContext)
+  // const { isLogin, setisLogin } = useContext(AppContext)
   const [username, setusername] = useState('');
   const [password, setpassword] = useState('');
   const toggleMode = () => {
     setisModeApply((prevMode) => (prevMode === "LIGHT_MODE" ? "DARK_MODE" : "LIGHT_MODE"));
   };
+//  Google login
+
+
+GoogleSignin.configure({
+  webClientId: '274466920945-i7nu1uis3qm7k8kpggme5u16t9kc5ltf.apps.googleusercontent.com',
+});
+
+async function onGoogleButtonPress() {
+
+  try {
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+    // Get the users ID token
+    const { idToken } = await GoogleSignin.signIn();
+  
+    // Create a Google credential with the token
+    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+  
+    // Sign-in the user with the credential
+     auth().signInWithCredential(googleCredential);
+     console.log("User sign in by google successfully"+idToken);
+     GoogleSignin.signOut();
+  } catch (error) {
+    console.log("Function onGoogleButtonPress error: "+error);
+  }
+//  Nos laf token nha
+}
 
   const theme = LIGHT_DARK_MODE(isModeApply);
   return (
@@ -66,6 +94,7 @@ const Login = (props) => {
               label='Continue with Facebook' />
             <View style={{ height: 15 }} />
             <SocialSignInButton
+              onPress={onGoogleButtonPress}
               iconName='google'
               iconColor='black'
               iconSize={25}
@@ -73,6 +102,7 @@ const Login = (props) => {
               borderColor='#d4d4d4'
               labelColor='black'
               label='Continue with Google'
+              
             />
             <View style={{ height: 15 }} />
             <SocialSignInButton

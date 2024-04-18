@@ -49,9 +49,11 @@ export const MyTextInputPassword = ({ text, placeholder, length }) => {
     )
 }
 
-export const SocialSignInButton = ({ label, iconName, iconColor, backgroundColor, labelColor, iconSize, borderColor }) => {
+export const SocialSignInButton = ({ label, iconName, iconColor, backgroundColor, labelColor, iconSize, borderColor,onPress }) => {
     return (
-        <TouchableOpacity style={[
+        <TouchableOpacity
+        onPress={onPress}
+        style={[
             styles.btnSocialContainer,
             { backgroundColor: backgroundColor, borderWidth: 1, borderColor: borderColor }]}>
             <FontAwesomeIcon name={iconName} size={iconSize} color={iconColor} />

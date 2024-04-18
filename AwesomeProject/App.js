@@ -70,9 +70,7 @@ const App = () => {
     //     <AppNavigator />
     //   </NavigationContainer>
     // </AppContextProvider>
-    // <Language/>
-    // <MyCards/>
-    <EditCard/>
+    <Login/>
   )
 }
 /* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
