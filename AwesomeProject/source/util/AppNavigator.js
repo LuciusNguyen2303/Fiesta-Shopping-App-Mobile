@@ -71,7 +71,7 @@ const AppNavigator = () => {
     return (
         <>
             {
-                isLogin === false ? <Tab/> : <CloneStack />
+                isLogin === false ? <CloneStack/> : <Tab />
             }
         </>
     )

@@ -65,12 +65,12 @@ const App = () => {
   
   return (
 
-    // <AppContextProvider>
-    //   <NavigationContainer>
-    //     <AppNavigator />
-    //   </NavigationContainer>
-    // </AppContextProvider>
-    <ChatDashboard/>
+    <AppContextProvider>
+      <NavigationContainer>
+        <AppNavigator />
+      </NavigationContainer>
+    </AppContextProvider>
+    
   )
 }
 /* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
