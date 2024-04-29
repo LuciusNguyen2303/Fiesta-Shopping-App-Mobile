@@ -20,10 +20,14 @@ const Login = (props) => {
   const { isLogin, setisLogin } = useContext(AppContext)
   const [username, setusername] = useState('');
   const [password, setpassword] = useState('');
-  const toggleMode = () => {
-    setisModeApply((prevMode) => (prevMode === "LIGHT_MODE" ? "DARK_MODE" : "LIGHT_MODE"));
-  };
+  
+  // change darklightmode function
+  // const toggleMode = () => {
+  //   setisModeApply((prevMode) => (prevMode === "LIGHT_MODE" ? "DARK_MODE" : "LIGHT_MODE"));
+  // };
+  // const theme = LIGHT_DARK_MODE(isModeApply);
 
+  // signinFacebook
   const facebookLogin = async () => {
     try {
       // Hiển thị cửa sổ đăng nhập Facebook
@@ -35,6 +39,17 @@ const Login = (props) => {
       } else {
         // Lấy thông tin token sau khi đăng nhập thành công
         const data = await AccessToken.getCurrentAccessToken();
+        const currentProfile = await Profile.getCurrentProfile().then(
+          function (currentProfile) {
+            if (currentProfile) {
+              console.log("The current logged user is: " +
+                currentProfile.name
+                + ". His profile id is: " +
+                currentProfile.userID
+              );
+            }
+          }
+        );
         if (data) {
           // Token đã được lấy thành công, bạn có thể thực hiện các hành động ở đây
           console.log(data.accessToken.toString());
@@ -45,7 +60,6 @@ const Login = (props) => {
     }
   };
 
-  const theme = LIGHT_DARK_MODE(isModeApply);
   return (
     <View style={AppStyles.StyleLogin.container}>
       <ImageBackground resizeMode='cover' source={require('../../assets/images/logo.jpg')} style={{ height: 180 }}>
