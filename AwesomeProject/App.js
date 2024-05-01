@@ -61,16 +61,17 @@ import SearchScreen from './source/screens/ProductSearch/SearchScreen';
 import OrderScreen from './source/screens/OrderStatus/OrderScreen';
 import Home from './source/screens/Home/Home';
 import ChatDashboard from './source/screens/Chat/ChatDashboard';
+import Screen from './source/screens/test/Screen';
 const App = () => {
   
   return (
 
-    <AppContextProvider>
-      <NavigationContainer>
-        <AppNavigator />
-      </NavigationContainer>
-    </AppContextProvider>
-    
+    // <AppContextProvider>
+    //   <NavigationContainer>
+    //     <AppNavigator />
+    //   </NavigationContainer>
+    // </AppContextProvider>
+    <Screen />
   )
 }
 /* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
