@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "973425867120",
-    "project_id": "fiestaproject-442d3",
-    "storage_bucket": "fiestaproject-442d3.appspot.com"
+    "project_number": "1004261782493",
+    "project_id": "fiestaproject-713d6",
+    "storage_bucket": "fiestaproject-713d6.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:973425867120:android:8ab093c7fb079ad416b7b5",
+        "mobilesdk_app_id": "1:1004261782493:android:2a71506cb1d6a4f0e57c34",
         "android_client_info": {
           "package_name": "com.awesomeproject"
         }
       },
       "oauth_client": [
         {
-          "client_id": "973425867120-anjstm5f3afj6pm2j0usu9e2avthsoin.apps.googleusercontent.com",
+          "client_id": "1004261782493-4bn263avrm5vn8eb1dgaup75pttsldlo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.awesomeproject",
+            "certificate_hash": "3a4b6ee52d058bdd0cef35462f45525309dd649b"
+          }
+        },
+        {
+          "client_id": "1004261782493-fre5jd86ouse70duhbqkc9jgg78gatt4.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDl6Vb54wuNdyliYaIvaWf24UJUBsHKjzo"
+          "current_key": "AIzaSyCp8l7LjVC886eonWKNpTlO1ayJcFXofaw"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "973425867120-anjstm5f3afj6pm2j0usu9e2avthsoin.apps.googleusercontent.com",
+              "client_id": "1004261782493-fre5jd86ouse70duhbqkc9jgg78gatt4.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

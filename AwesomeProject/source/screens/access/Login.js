@@ -10,9 +10,9 @@ import {
   MyTextInput,
   MySection,
   MyTextInputPassword,
-  SocialSignInButton,
   LineWithTextBetween
 } from '../../components/textinput/AccessComponents'
+import { SocialSignInButton } from '../../components/textinput/AccessComponents'
 import { MetarialIcon } from '../../components/icon/Material'
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
@@ -52,32 +52,32 @@ const Login = (props) => {
       console.log('Lỗi đăng nhập: ', error);
     }
   };
-//  Google login
+  //  Google login
 
 
-GoogleSignin.configure({
-  webClientId: '274466920945-i7nu1uis3qm7k8kpggme5u16t9kc5ltf.apps.googleusercontent.com',
-});
+  GoogleSignin.configure({
+    webClientId: '1004261782493-fre5jd86ouse70duhbqkc9jgg78gatt4.apps.googleusercontent.com',
+  });
 
-async function onGoogleButtonPress() {
+  async function onGoogleButtonPress() {
 
-  try {
-    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-    // Get the users ID token
-    const { idToken } = await GoogleSignin.signIn();
-  
-    // Create a Google credential with the token
-    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-  
-    // Sign-in the user with the credential
-     auth().signInWithCredential(googleCredential);
-     console.log("User sign in by google successfully"+idToken);
-     GoogleSignin.signOut();
-  } catch (error) {
-    console.log("Function onGoogleButtonPress error: "+error);
+    try {
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      // Get the users ID token
+      const { idToken } = await GoogleSignin.signIn();
+
+      // Create a Google credential with the token
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+      // Sign-in the user with the credential
+      auth().signInWithCredential(googleCredential);
+      console.log("User sign in by google successfully" + idToken);
+      GoogleSignin.signOut();
+    } catch (error) {
+      console.log("Function onGoogleButtonPress error: " + error);
+    }
+    //  Nos laf token nha
   }
-//  Nos laf token nha
-}
 
   // createToken when logged in facebook
   const createToken = async (userID) => {
@@ -154,19 +154,18 @@ async function onGoogleButtonPress() {
           </TouchableOpacity>
           <LineWithTextBetween />
           <View>
-            <TouchableOpacity onPress={facebookLogin}>
-              <SocialSignInButton
-                iconName='facebook'
-                iconColor='white'
-                iconSize={25}
-                backgroundColor='#3B5999'
-                borderColor='#3B5999'
-                labelColor='white'
-                label='Continue with Facebook' />
-            </TouchableOpacity>
+            <SocialSignInButton
+              onPress={() => facebookLogin()}
+              iconName='facebook'
+              iconColor='white'
+              iconSize={25}
+              backgroundColor='#3B5999'
+              borderColor='#3B5999'
+              labelColor='white'
+              label='Continue with Facebook' />
             <View style={{ height: 15 }} />
             <SocialSignInButton
-              onPress={onGoogleButtonPress}
+              onPress={() => onGoogleButtonPress()}
               iconName='google'
               iconColor='black'
               iconSize={25}
@@ -174,7 +173,7 @@ async function onGoogleButtonPress() {
               borderColor='#d4d4d4'
               labelColor='black'
               label='Continue with Google'
-              
+
             />
             <View style={{ height: 15 }} />
             <TouchableOpacity onPress={() => getIemFromAsyncStorage('accessToken')}>
