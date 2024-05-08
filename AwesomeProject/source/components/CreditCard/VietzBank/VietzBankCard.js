@@ -21,7 +21,7 @@ const VietzBankCard = ({ name, accountNum, expiredDate, style, front, CVV }) => 
                 >Account Number</Text>
                 <Text
                   style={[CardStyles.accountNumStyle, VietzBankCardStyles.Info]}
-                >{accountNum}</Text>
+                >{cutStringIntoEqualParts(accountNum, 4)}</Text>
                 <Text
                   style={[commonStyles.normalText, VietzBankCardStyles.text, { color: 'white', fontStyle: 'italic' }]}
                 >Name</Text>

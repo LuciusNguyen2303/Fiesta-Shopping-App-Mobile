@@ -12,9 +12,25 @@ import { cardHeight, titleCardHeight, cardPadding } from './MyCards';
 import { MySection } from '../../../components/textinput/AccessComponents';
 import { FontAwesomeIcon } from '../../../components/icon/FontAwesome';
 import cutStringIntoEqualParts from '../../../components/CreditCard/AccountNumArgo';
+import { Dropdown } from 'react-native-element-dropdown';
+import { cardLists } from '../../../components/CreditCard/CardLists';
+import { styleEditCards } from './styles';
+import { cardNameList } from '../../../components/CreditCard/CardBrandList';
 const EditCard = () => {
 
+
+    // Dialog
+    const [isClosed, setIsClosed] = useState(true);
+    function dialogFunction() {
+        setIsClosed(!isClosed)
+    }
+
     //card info var
+
+    // types of card 
+    const [value, setValue] = useState(null);
+    const [isFocus, setIsFocus] = useState(false);
+
     // expired date
     const [date, setDate] = useState(new Date())
     const [dateString, setDateString] = useState("")
@@ -35,15 +51,13 @@ const EditCard = () => {
     const [isCVV, setIsCVV] = useState(true)
 
     // // check card's info 
-    // const [checkingCard, setCheckingCard] = useState(false);
-
     // Flip card 
     // variables 
     const handleNumberChange = (text) => {
         // Loại bỏ các ký tự không phải là số từ chuỗi text
         const formattedText = text.replace(/[^0-9]/g, '');
-       return formattedText;
-      };
+        return formattedText;
+    };
     const rotate = useSharedValue(0);
     const frontAnimatedStyles = useAnimatedStyle(() => {
         const rotateValue = interpolate(rotate.value, [0, 1], [0, 180])
@@ -69,12 +83,12 @@ const EditCard = () => {
     const handlePaste = () => {
         // Ngăn chặn hành động paste
         return false;
-      };
-// check each element by regex
+    };
+    // check each element by regex
 
 
 
-// check empty card element
+    // check empty card element
     const cardValidate = () => {
         if (dateString && name && CVV && accountNum) {
             console.log("Đúng thông tin...", "Điền code ở đấyyyyy.");
@@ -90,6 +104,8 @@ const EditCard = () => {
             setIsCVV(false)
 
         if (!accountNum)
+            setIsAccountNum(false);
+        if (!value)
             setIsAccountNum(false);
         ToastAndroid.show("You must fill in your card's information!!!", ToastAndroid.SHORT)
         return;
@@ -168,7 +184,7 @@ const EditCard = () => {
                     placeholder='Account Number'
                     placeholderTextColor={"#c3c3c3"}
                     onChangeText={(text) => { setAccountNum(handleNumberChange(text)) }}
-                    
+
                     style={[commonStyles.normalText,
 
                     {
@@ -207,6 +223,40 @@ const EditCard = () => {
 
                     }]}
 
+                />
+                <View>
+                    <TouchableOpacity onPress={dialogFunction}>
+                        <Text>safsdfsfsdf</Text>
+                    </TouchableOpacity>
+                    <Dialog
+                        styleTitle={dialogStyle.title}
+                        buttonStyle={dialogStyle.button}
+                        styleMessage={dialogStyle.message}
+                        styleImage={dialogStyle.image}
+                        title={'Successful'}
+
+                        message='You have done your task today!'
+                        dialogFunction={dialogFunction}
+                        buttonName={"Back to the home"}
+                        isClosed={isClosed}
+                    />
+                </View>
+                <Dropdown
+                    style={styleEditCards.dropdownStyle}
+                    data={cardNameList}
+                    value={value}
+                    onFocus={() => setIsFocus(true)}
+                    onBlur={() => setIsFocus(false)}
+                    onChange={item => {
+                        console.log(item.value);
+                        setValue(item.value);
+                        setIsFocus(false);
+                    }}
+                    placeholderStyle={[commonStyles.normalText]}
+                    placeholder="Select your card's brand"
+                    maxHeight={250}
+                    labelField="value"
+                    valueField="value"
                 />
                 <View
 
@@ -291,7 +341,7 @@ const EditCard = () => {
         </KeyboardAwareScrollView>
     )
 }
-const Header = ({ onBack, onCart }) => {
+export const Header = ({ onBack, onCart }) => {
     return (
         <View
         >

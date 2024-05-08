@@ -22,7 +22,7 @@ const NBBankCard = ({ name, accountNum, expiredDate, style, front, CVV }) => {
                 >Account Number</Text>
                 <Text
                   style={[sCardStyles.accountNumStyle, NBBBankCardStyles.Info]}
-                >{accountNum}</Text>
+                >{cutStringIntoEqualParts(accountNum, 4)}</Text>
                 <Text
                   style={[commonStyles.normalText, NBBBankCardStyles.text, { color: 'white', fontStyle: 'italic' }]}
                 >Name</Text>

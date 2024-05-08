@@ -22,7 +22,7 @@ const TechniBankCard = ({ name, accountNum, expiredDate, style, front, CVV }) =>
                 >Account Number</Text>
                 <Text
                   style={[CardStyles.accountNumStyle, TechniBankCardStyles.Info]}
-                >{accountNum}</Text>
+                >{cutStringIntoEqualParts(accountNum, 4)}</Text>
                 <Text
                   style={[commonStyles.normalText, TechniBankCardStyles.text, { color: 'white', fontStyle: 'italic' }]}
                 >Name</Text>

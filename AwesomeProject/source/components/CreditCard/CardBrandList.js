@@ -1,9 +1,9 @@
 export const cardNameList = [
-    'BIDV',
-    'GodiBank',
-    'NBBank',
-    'TechniBank',
-    'TPBank',
-    'VietTanBank',
-    'VietzBank'
+   { value:'BIDV'},
+   { value:'GodiBank'},
+   { value:'NBBank'},
+   { value:'TechniBank'},
+   { value:'TPBank'},
+   { value:'VietTanBank'},
+   { value:'VietzBank'}
 ]

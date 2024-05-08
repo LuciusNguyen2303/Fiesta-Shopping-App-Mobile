@@ -11,6 +11,6 @@ function cutStringIntoEqualParts(message, numParts) {
       parts.push(message.slice(startIndex, endIndex));
       startIndex = endIndex;
     }
-    return parts.join('  ');
+    return parts.join(' ');
   }
   export default cutStringIntoEqualParts;
