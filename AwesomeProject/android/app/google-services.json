@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "973425867120",
+    "project_id": "fiestaproject-442d3",
+    "storage_bucket": "fiestaproject-442d3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:973425867120:android:8ab093c7fb079ad416b7b5",
+        "android_client_info": {
+          "package_name": "com.awesomeproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "973425867120-anjstm5f3afj6pm2j0usu9e2avthsoin.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDl6Vb54wuNdyliYaIvaWf24UJUBsHKjzo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "973425867120-anjstm5f3afj6pm2j0usu9e2avthsoin.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

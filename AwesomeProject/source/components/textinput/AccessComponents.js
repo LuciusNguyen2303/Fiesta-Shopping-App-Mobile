@@ -9,7 +9,7 @@ export const MySection = ({ label }) => {
     return <Text style={styles.section}>{label}</Text>
 }
 
-export const MyTextInput = ({ text, placeholder, length }) => {
+export const MyTextInput = ({ placeholder, length, onChangeText }) => {
     return (
         <View style={styles.container}>
             <TextInput
@@ -17,7 +17,7 @@ export const MyTextInput = ({ text, placeholder, length }) => {
                 textAlignVertical="bottom"
                 placeholder={placeholder}
                 maxLength={length}
-                value={text}
+                onChangeText={onChangeText}
             />
             <View style={styles.icon}>
                 <MetarialIcon name='done' size={20} color='black' />
@@ -26,7 +26,7 @@ export const MyTextInput = ({ text, placeholder, length }) => {
     )
 }
 
-export const MyTextInputPassword = ({ text, placeholder, length }) => {
+export const MyTextInputPassword = ({placeholder, length, onChangeText }) => {
     const [isVisible, setisVisible] = useState(true)
     const handlerIcon1 = () => {
         setisVisible(!isVisible)
@@ -38,7 +38,7 @@ export const MyTextInputPassword = ({ text, placeholder, length }) => {
                 secureTextEntry={isVisible}
                 placeholder={placeholder}
                 maxLength={length}
-                value={text}
+                onChangeText={onChangeText}
             />
             <TouchableOpacity onPress={handlerIcon1} style={styles.icon}>
                 <MetarialIcon name={isVisible === true ? 'visibility-off' : 'visibility'} size={20} color='black' />
@@ -49,14 +49,14 @@ export const MyTextInputPassword = ({ text, placeholder, length }) => {
 
 export const SocialSignInButton = ({ label, iconName, iconColor, backgroundColor, labelColor, iconSize, borderColor }) => {
     return (
-        <TouchableOpacity style={[
+        <View style={[
             styles.btnSocialContainer,
             { backgroundColor: backgroundColor, borderWidth: 1, borderColor: borderColor }]}>
             <FontAwesomeIcon name={iconName} size={iconSize} color={iconColor} />
             <Text style={[commonStyles.textBtnAccess_light, { color: labelColor }]}>
                 {label}
             </Text>
-        </TouchableOpacity>
+        </View>
     )
 }
 
