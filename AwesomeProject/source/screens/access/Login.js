@@ -56,7 +56,7 @@ const Login = (props) => {
 
 
   GoogleSignin.configure({
-    webClientId: '1004261782493-fre5jd86ouse70duhbqkc9jgg78gatt4.apps.googleusercontent.com',
+    webClientId: '1004261782493-85h6acr55sfjv0usi1o98s62h6n3c6ev.apps.googleusercontent.com',
   });
 
   async function onGoogleButtonPress() {
@@ -71,7 +71,7 @@ const Login = (props) => {
 
       // Sign-in the user with the credential
       auth().signInWithCredential(googleCredential);
-      console.log("User sign in by google successfully" + idToken);
+      ToastAndroid.show("User sign in by google successfully" + idToken,ToastAndroid.LONG);
       GoogleSignin.signOut();
     } catch (error) {
       console.log("Function onGoogleButtonPress error: " + error);
