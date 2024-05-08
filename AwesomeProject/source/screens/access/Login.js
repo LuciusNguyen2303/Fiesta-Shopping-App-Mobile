@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ImageBackground } from 'react-native'
+import { View, Text, TouchableOpacity, ImageBackground, ToastAndroid } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { LIGHT_MODE } from '../../config/ThemeAction'
 import { DARK_MODE } from '../../config/ThemeAction'
@@ -14,13 +14,14 @@ import {
   LineWithTextBetween
 } from '../../components/textinput/AccessComponents'
 import { MetarialIcon } from '../../components/icon/Material'
+import AxiosInstance from '../../util/AxiosInstance'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 const Login = (props) => {
   const { navigation } = props;
   const [isModeApply, setisModeApply] = useState("LIGHT_MODE")
   const { isLogin, setisLogin } = useContext(AppContext)
   const [username, setusername] = useState('');
   const [password, setpassword] = useState('');
-  
   // change darklightmode function
   // const toggleMode = () => {
   //   setisModeApply((prevMode) => (prevMode === "LIGHT_MODE" ? "DARK_MODE" : "LIGHT_MODE"));
@@ -30,35 +31,66 @@ const Login = (props) => {
   // signinFacebook
   const facebookLogin = async () => {
     try {
-      // Hiển thị cửa sổ đăng nhập Facebook
       const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
-
       if (result.isCancelled) {
-        // Đăng nhập bị hủy
         console.log('Đăng nhập bị hủy');
       } else {
-        // Lấy thông tin token sau khi đăng nhập thành công
-        const data = await AccessToken.getCurrentAccessToken();
         const currentProfile = await Profile.getCurrentProfile().then(
           function (currentProfile) {
             if (currentProfile) {
-              console.log("The current logged user is: " +
-                currentProfile.name
-                + ". His profile id is: " +
-                currentProfile.userID
+              console.log("Tên người dùng Facebook: " +
+                currentProfile.name + " userID: " + currentProfile.userID
               );
+              createToken(currentProfile.userID)
             }
           }
         );
-        if (data) {
-          // Token đã được lấy thành công, bạn có thể thực hiện các hành động ở đây
-          console.log(data.accessToken.toString());
-        }
       }
     } catch (error) {
       console.log('Lỗi đăng nhập: ', error);
     }
   };
+
+  // createToken when logged in facebook
+  const createToken = async (userID) => {
+    const response = await AxiosInstance.post('jwtApi/facebookSignin?id=' + userID);
+    if (response.accessToken) {
+      console.log('accessToken: ' + response.accessToken);
+      await AsyncStorage.setItem('accessToken', response.accessToken)
+    }
+  }
+
+  // get accessToken from AsyncStorage
+  const getIemFromAsyncStorage = async (key) => {
+    const accessToken = await AsyncStorage.getItem(key)
+    if (accessToken) {
+      console.log('accessToken from AsyncStorage: ' + accessToken);
+    }
+  }
+
+  //signin with mongo DB
+  const login = async () => {
+    try {
+      const response = await AxiosInstance.post('userApi/login', { userName: username, password: password })
+      console.log('response: ' + JSON.stringify(response));
+      if (response.data && response.result === true) {
+        ToastAndroid.show('Signin Successful', ToastAndroid.SHORT)
+      } else if (response.result === false) {
+        ToastAndroid.show('Signin Failed', ToastAndroid.SHORT)
+      }
+    } catch (error) {
+      console.log('Signin error: ' + error);
+    }
+  }
+
+  //textInput handler
+  const passwordHandler = (text) => {
+    setpassword(text)
+  }
+  const userNameHandler = (text) => {
+    setusername(text)
+  }
+  //textInput handler
 
   return (
     <View style={AppStyles.StyleLogin.container}>
@@ -78,14 +110,16 @@ const Login = (props) => {
         </Text>
         <View style={{ marginTop: 50 }}>
           <MySection label='Email' />
-          <MyTextInput text={username} placeholder='Enter your email' />
+          <MyTextInput placeholder='Enter your email' onChangeText={userNameHandler} />
         </View>
         <View style={{ marginTop: 25 }}>
           <MySection label='Password' />
-          <MyTextInputPassword text={password} placeholder='Enter your password' />
+          <MyTextInputPassword placeholder='Enter your password' onChangeText={passwordHandler} />
         </View>
         <View style={{ marginTop: 20 }}>
-          <TouchableOpacity style={[commonStyles.btnAccess_dark, { backgroundColor: 'black' }]}>
+          <TouchableOpacity
+            onPress={login}
+            style={[commonStyles.btnAccess_dark, { backgroundColor: 'black' }]}>
             <Text style={commonStyles.textBtnAccess_dark}>
               Login
             </Text>
@@ -113,15 +147,17 @@ const Login = (props) => {
               label='Continue with Google'
             />
             <View style={{ height: 15 }} />
-            <SocialSignInButton
-              iconName='apple'
-              iconColor='black'
-              iconSize={25}
-              backgroundColor='white'
-              borderColor='#d4d4d4'
-              labelColor='black'
-              label='Continue with Apple'
-            />
+            <TouchableOpacity onPress={() => getIemFromAsyncStorage('accessToken')}>
+              <SocialSignInButton
+                iconName='apple'
+                iconColor='black'
+                iconSize={25}
+                backgroundColor='white'
+                borderColor='#d4d4d4'
+                labelColor='black'
+                label='Continue with Apple'
+              />
+            </TouchableOpacity>
           </View>
         </View>
       </View>

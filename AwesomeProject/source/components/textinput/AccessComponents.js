@@ -9,7 +9,7 @@ export const MySection = ({ label }) => {
     return <Text style={styles.section}>{label}</Text>
 }
 
-export const MyTextInput = ({ placeholder, length }) => {
+export const MyTextInput = ({ placeholder, length, onChangeText }) => {
     return (
         <View style={styles.container}>
             <TextInput
@@ -17,6 +17,7 @@ export const MyTextInput = ({ placeholder, length }) => {
                 textAlignVertical="bottom"
                 placeholder={placeholder}
                 maxLength={length}
+                onChangeText={onChangeText}
             />
             <View style={styles.icon}>
                 <MetarialIcon name='done' size={20} color='black' />
@@ -25,7 +26,7 @@ export const MyTextInput = ({ placeholder, length }) => {
     )
 }
 
-export const MyTextInputPassword = ({placeholder, length }) => {
+export const MyTextInputPassword = ({placeholder, length, onChangeText }) => {
     const [isVisible, setisVisible] = useState(true)
     const handlerIcon1 = () => {
         setisVisible(!isVisible)
@@ -37,6 +38,7 @@ export const MyTextInputPassword = ({placeholder, length }) => {
                 secureTextEntry={isVisible}
                 placeholder={placeholder}
                 maxLength={length}
+                onChangeText={onChangeText}
             />
             <TouchableOpacity onPress={handlerIcon1} style={styles.icon}>
                 <MetarialIcon name={isVisible === true ? 'visibility-off' : 'visibility'} size={20} color='black' />

@@ -16,6 +16,7 @@ const TabNavigator = createBottomTabNavigator();
 const StackNavigator = createNativeStackNavigator();
 import { FontAwesomeIcon } from "../components/icon/FontAwesome";
 import { FoundationIcon, FocusedFoundationIcon } from "../components/icon/Foundation";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const CloneStack = () => {
     return (
         <StackNavigator.Navigator screenOptions={{ headerShown: false }} initialRouteName="UserAccess">
@@ -68,10 +69,11 @@ const Tab = () => {
 
 const AppNavigator = () => {
     const { isLogin } = useContext(AppContext)
+    const accessToken = AsyncStorage.getItem('accessToken')
     return (
         <>
             {
-                isLogin === false ? <CloneStack/> : <Tab />
+                accessToken ? <Tab/> : <CloneStack/>
             }
         </>
     )
