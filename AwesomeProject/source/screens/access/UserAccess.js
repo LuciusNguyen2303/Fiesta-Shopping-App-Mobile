@@ -15,7 +15,7 @@ const UserAccess = (props) => {
                 "Style is a way to say who you are without having to speak, about timeless elegance and individuality."
                 </Text>
             </View>
-            <View style={[commonStyles.viewBtnAccess, {marginTop:320}]}>
+            <View style={[commonStyles.viewBtnAccess, {marginTop:300}]}>
                 <TouchableOpacity
                 onPress={() => navigation.navigate('Login')} 
                 style={commonStyles.btnAccess_light}>
@@ -23,8 +23,8 @@ const UserAccess = (props) => {
                 </TouchableOpacity>
                 <TouchableOpacity 
                 onPress={() => navigation.navigate('SignUp')} 
-                style={commonStyles.btnAccess_dark}>
-                    <Text style={commonStyles.textBtnAccess_dark}>Sign up</Text>
+                style={[commonStyles.btnAccess_dark, {borderColor:'white', borderWidth:1,backgroundColor:'#02020200'}]}>
+                    <Text style={[commonStyles.textBtnAccess_dark]}>Sign up</Text>
                 </TouchableOpacity>
             </View>
         </ImageBackground>
