@@ -5,10 +5,10 @@ import { commonStyles } from '../../../css/styles/CommonStyles'
 import { MetarialIcon } from '../../../components/icon/Material'
 import { TouchableOpacity } from 'react-native'
 export const ToggleButton = ({ currentMode }) => {
-    const [isEnabled, setisEnabled] = useState('off');
+    const [isEnabled, setisEnabled] = useState(false);
     const animatedValue = useRef(new Animated.Value(0)).current;
     const otherAnimation = Animated.timing(animatedValue, {
-        toValue: isEnabled === 'off' ? 0 : 13,
+        toValue: isEnabled === false ? 0 : 13,
         duration: 400,
         useNativeDriver: false,
     });
@@ -27,10 +27,10 @@ export const ToggleButton = ({ currentMode }) => {
     
     const doneWorkChangeMode = () => {
         otherAnimation.start();
-        if (isEnabled === 'off') {
-            setisEnabled('on')
+        if (isEnabled === false) {
+            setisEnabled(true)
         } else {
-            setisEnabled('off')
+            setisEnabled(false)
         }
         isEnabledHandler(isEnabled)
 
