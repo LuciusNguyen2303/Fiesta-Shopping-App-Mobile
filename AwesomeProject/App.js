@@ -63,18 +63,26 @@ import OrderScreen from './source/screens/OrderStatus/OrderScreen';
 import SettingScreen from './source/screens/Profile/Settings/SettingScreen';
 
 import Home from './source/screens/Home/Home';
+import DeliveryAddressScreen from './source/screens/Order/DeliveryAddressScreen';
+import { StripeProvider } from '@stripe/stripe-react-native';
 
 const App = () => {
 
   return (
+    <StripeProvider
+    publishableKey='pk_test_51PV6nVJbQzxhdXgcHCR0K31WwdRTSbmDj0maTMY17gI2poV6dhE4nDpLkX5uaBnx3HIHAR5pFqizb8jTtYXCOBIe002Y6VC1aA'
+    >
 
+      <DeliveryAddressScreen />
+
+    </StripeProvider>
     // <AppContextProvider>
     //   <NavigationContainer>
     //     <AppNavigator />
     //   </NavigationContainer>
     // </AppContextProvider>
 
-    <Login />
+    // <Login />
   )
 }
 

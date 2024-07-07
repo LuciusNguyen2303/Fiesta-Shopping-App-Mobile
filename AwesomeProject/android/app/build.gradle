@@ -258,8 +258,9 @@ dependencies {
     implementation 'com.facebook.fresco:fresco:2.5.0'
     implementation 'com.facebook.fresco:animated-gif:2.5.0'
     implementation 'com.facebook.fresco:webpsupport:2.5.0'
-
+    implementation("com.google.android.gms:play-services-wallet:19.4.0")
     implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
+    
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
     }
