@@ -1,152 +1,190 @@
-import {
-    View,
-    Text,
-    ImageBackground,
-    TouchableOpacity,
-    KeyboardAvoidingView,
-    Platform,
-    Image
-} from 'react-native'
-import Slider from '@react-native-community/slider'
-import React, { useState } from 'react'
-import { AppStyles } from '../../css/styles/CommonStyles'
-import { MetarialIcon } from '../../components/icon/Material'
-import { commonStyles } from '../../css/styles/CommonStyles'
-import { Star } from './components/star'
-import { dataRating, dataDaily } from '../../screens/ProductSearch/components/dataCagtegory'
-import { dataCategory } from '../../components/CategoryList/data'
-import {
-    MySection,
-    MyTextInput,
-    MyTextInputPassword,
-    CheckBox,
-    SuccesfulSignUpDialog
-} from '../../components/textinput/AccessComponents'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-// import data from...
+import { Dimensions, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
+import { SearchTextView } from '../../components/SearchView/SearchTextView'
+import { AppContext } from '../../util/AppContext'
+import Wrapper from '../../components/Wrapper'
+import Icon from 'react-native-vector-icons/Ionicons';
+import { useIsFocused, useNavigation, useRoute } from '@react-navigation/native'
+import { AppStyles, commonStyles } from '../../css/styles/CommonStyles'
+import { useDispatch, useSelector } from 'react-redux'
+import { filterSelector, onChangeName } from '../../redux-store'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useTranslation } from 'react-i18next'
 
-import { FontAwesomeIcon } from '../../components/icon/FontAwesome'
-import { ListCategory } from '../../components/CategoryList/list'
-// import data from...
-const SearchScreen = (props) => {
-    const [dataCate, setDataCategory] = useState(dataCategory);
-    const [dataDailyy, setDataDailyy] = useState(dataDaily);
-    //Radio button...
-    const [categorySelected, setCategorySelected] = useState('');
-    const [dailySelected, setDailySelected] = useState('');
-    const [ratingSelected, setRatingSelected] = useState('')
-    //Radio button
-    //slider...
-    const [selectedPrice, setSelectedPrice] = useState(0)
-    //slider
-    //rating...
-    const [dataRatingSelected, setDataRatingSelected] = useState()
-    //rating
+const SearchScreen = ({ }) => {
+
+    // HIDE BOTTOM NAVIGATION BAR 
+    const navigation =useNavigation()
+    
+    useEffect(() => {
+        navigation.getParent()?.setOptions({
+          tabBarStyle: {
+           display:'none'
+          }
+        });
+
+        return () => navigation.getParent()?.setOptions({
+          tabBarStyle:{
+            display:'flex',
+            backgroundColor: "white",position: 'absolute', borderTopLeftRadius: 30,
+            borderTopRightRadius: 30, height: 70, paddingLeft: 30, paddingRight: 30,
+          }
+        });
+      }, [navigation]);
+
+    const filter = useSelector(filterSelector)
+    const { width } = Dimensions.get('screen')
+    const { theme } = useContext(AppContext)
+    const isFocused = useIsFocused()
+    const dispatch = useDispatch()
+    const [text, setText] = useState('');
+    const [historySearchList, setHistorySearchList] = useState([]);
+    const onSubmitText = async (text) => {
+        setText(text)
+        console.log(text);
+        const set = new Set(historySearchList)
+        if (!set.has(text)&&text.length>0) {
+            let newArr = [...historySearchList]
+            newArr.unshift(text)
+            setHistorySearchList(newArr)
+        }
+        dispatch(onChangeName(text))
+        navigation.navigate("FilterProductScreen")
+
+    }
+    const onHandleClick = async (item) => {
+        if (typeof item !== 'undefined' && item.length > 0) {
+            dispatch(onChangeName(item))
+            setText(item)
+        }
+        navigation.navigate("FilterProductScreen")
+    }
+    const getHistorySearchList = async () => {
+        const historyList = await AsyncStorage.getItem('HistoryList')
+        setHistorySearchList(JSON.parse(historyList))
+
+    }
+    const onDeleteItem = (target) => {
+        const newHistoryList = [...historySearchList]
+        const updatedHistoryList = newHistoryList.filter(item => { return item !== target })
+        setHistorySearchList(updatedHistoryList)
+    }
+    const onBack = async () => {
+        navigation.goBack()
+        await AsyncStorage.setItem("HistoryList", JSON.stringify(historySearchList))
+        dispatch(onChangeName(""))
+    }
+    useEffect(() => {
+        console.log(JSON.stringify(filter));
+
+        return () => {
+
+        }
+    }, [filter])
+
+    useEffect(() => {
+        const onFocusScreen = async () =>{
+            if (isFocused)
+                getHistorySearchList()
+            else
+            await AsyncStorage.setItem("HistoryList",JSON.stringify(historySearchList))
+        }
+
+        onFocusScreen()
+        return () => {
+
+        }
+    }, [isFocused])
+    const {t} =useTranslation()
     return (
-        <View style={commonStyles.container}>
-            <View style={AppStyles.StyleSearchScreen.container}>
-                <TouchableOpacity style={{ backgroundColor: 'black', borderRadius: 50, padding: 2 }}>
-                    <MetarialIcon name='arrow-back' color='white' size={25} />
-                </TouchableOpacity>
-                <TouchableOpacity>
-                    <MetarialIcon name='search' color='black' size={30} />
-                </TouchableOpacity>
-            </View>
-            <View style={{ marginTop: 20 }}>
-                <MySection label='Categories' />
-                <ListCategory data={dataCate} style={{flexDirection: 'row', flexWrap: 'wrap', marginTop: 5, marginLeft: -5}}/>
-                <View style={{ marginTop: 20 }}>
-                    <MySection label='Price Range' />
-                    <Slider
-                        style={{ width: '100%', height: 10, backgroundColor: 'white', marginTop: 20 }}
-                        minimumValue={0}
-                        maximumValue={1750}
-                        minimumTrackTintColor="#000000"
-                        maximumTrackTintColor="#000000"
-                        thumbTintColor='#000000'
-                        onValueChange={setSelectedPrice}
-                    />
-                </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '95%', marginLeft: 7, marginTop: 5 }}>
-                    <TouchableOpacity>
-                        <MetarialIcon name='cached' color='black' size={18} />
-                    </TouchableOpacity>
-                    <Text style={[commonStyles.title, { color: 'black', fontSize: 15 }]}>
-                        ${Math.round(selectedPrice + 0)}
+        <KeyboardAvoidingView
+            style={{backgroundColor:'white',height:'100%'}}
+        >
+            <ScrollView
+                style={{ marginTop: 20 }}
+            >
+                <Wrapper>
+                    <View
+                        style={StyleSearchScreen.headerBar}
+                    >
+                        <TouchableOpacity onPress={() => onBack()}>
+                            <Icon name="arrow-back-circle" color={theme.secondary} size={46} />
+
+                        </TouchableOpacity>
+                        <SearchTextView
+                            width={"85%"}
+                            text={text}
+                            borderWidth={0.5}
+                            onSubmitText={onSubmitText}
+                            backGroundColor={theme.primary}
+                        />
+
+                    </View>
+                    <Text
+                        style={[commonStyles.normalText, { fontSize: 18, fontWeight: 'bold', marginVertical: 20, color: theme.secondary }]}
+                    >
+                        {t("History search")}
                     </Text>
-                    <TouchableOpacity>
-                        <MetarialIcon name='cached' color='black' size={18} />
-                    </TouchableOpacity>
-                </View>
-                <View style={{ marginTop: 20 }}>
-                    <MySection label='Sort By Latest' />
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 5, marginLeft: -5 }}>
-                        {
-                            Object.keys(dataDailyy).length > 0 ?
-                                dataDailyy.map(item =>
+                    <View
+                        style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 5, marginLeft: -5, width: width }}
+                    >
+
+                        {historySearchList.length > 0 ? (
+                            historySearchList.map((item, index) => (
+                                <View
+                                    style={{ flexDirection: 'row', flexWrap: 'nowrap', backgroundColor: theme.primary }}
+                                    key={item}
+                                >
                                     <TouchableOpacity
-                                        activeOpacity={1}
-                                        onPress={() => setDailySelected(item.id)}
+                                        onPress={() => onHandleClick(item)}
                                         style={[
                                             AppStyles.StyleSearchScreen.listCat,
-                                            { backgroundColor: dailySelected === item.id ? 'black' : 'white' }
-                                        ]}
-                                        key={item.id}>
-                                        <Text
-                                            style={[
-                                                commonStyles.normalText,
-                                                { color: dailySelected === item.id ? 'white' : 'black' }]}>
-                                            {item.name}
-                                        </Text>
-                                    </TouchableOpacity>) :
-                                <View />
-                        }
-                    </View>
-                </View>
-                <View style={{ marginTop: 15 }}>
-                    <MySection label='Rating' />
-                    <View style={{ marginTop: 5, flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <View style={{ marginLeft: -6 }}>
-                            <Star count={5} />
-                            <Star count={4} />
-                            <Star count={3} />
-                            <Star count={2} />
-                            <Star count={1} />
-                        </View>
-                        <View style={{ height: '100%' }}>
-                            {
-                                Object.keys(dataRating).length > 0 ?
-                                    dataRating.map(item =>
-                                        <TouchableOpacity
-                                            onPress={() => setRatingSelected(item.id)}
-                                            activeOpacity={1}
-                                            style={[
-                                                { width: 15, height: 15, borderRadius: 50, justifyContent: 'center', alignItems: 'center', marginTop: 12 },
-                                                ratingSelected === item.id ?
-                                                    { backgroundColor: 'black' } : { backgroundColor: '#e8e8e8' }
-                                            ]}
-                                            key={item.id}>
                                             {
-                                                ratingSelected === item.id ?
-                                                    <FontAwesomeIcon name='circle' size={7} color='white' /> : <View />
+                                                borderColor: theme.secondary, borderWidth: 0.5
                                             }
-                                        </TouchableOpacity>
-                                    )
-                                    : <View />
-                            }
-                        </View>
+                                        ]}
+                                        key={item._id}
+                                    >
+                                        <View
+                                            style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
+                                        >
+                                            <Text
+                                                style={[
+                                                    commonStyles.normalText,
+                                                    {
+                                                        color: theme.secondary
+                                                    }
+                                                ]}
+                                            >
+                                                {item}
+                                            </Text>
+                                            <TouchableOpacity
+                                                style={{ marginLeft: 5 }}
+                                                onPress={() => onDeleteItem(item)}
+                                            >
+                                                <Icon name='close' size={18} color={theme.secondary} />
+                                            </TouchableOpacity>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+                            ))
+                        ) : (
+                            <Text style={commonStyles.normalText} >No history searches...</Text>
+                        )}
                     </View>
-                </View>
-            </View>
-            <View style={{ marginTop: 40 }}>
-                <TouchableOpacity style={commonStyles.btnAccess_dark}>
-                    <Text style={commonStyles.textBtnAccess_dark}>
-                        Apply
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+                </Wrapper>
+            </ScrollView>
+        </KeyboardAvoidingView>
     )
 }
 
 export default SearchScreen
+
+const StyleSearchScreen = StyleSheet.create({
+    headerBar: {
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        alignItems: 'center',
+    }
+
+})

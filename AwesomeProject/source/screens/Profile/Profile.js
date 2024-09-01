@@ -1,5 +1,5 @@
-import { View, Text , Image, TouchableOpacity, ImageBackground, ScrollView } from 'react-native'
-import React,{useState} from 'react'
+import { View, Text, Image, Appearance, TouchableOpacity, ImageBackground, ScrollView, BackHandler } from 'react-native'
+import React, { useContext, useState } from 'react'
 import Icon from 'react-native-vector-icons/Ionicons';
 import { LogBox } from 'react-native';
 import StyleProfile from './styles'
@@ -7,19 +7,53 @@ import { useTranslation } from 'react-i18next';
 import { styleCoProdScreen } from '../CategoryofProductScreen/Styles'
 import Wrapper from '../../components/Wrapper';
 import Language from './Language/Language';
+import { AppContext } from '../../util/AppContext';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { dataUserSelector, resetUser, setIsLogin } from '../../redux-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const Profile = (props) => {
-    LogBox.ignoreAllLogs();
-    const {navigation}=props;
+    const userData = useSelector(dataUserSelector)
 
-    const moveToNewScreen =()=>{
-        navigation.navigate("Language")
+    const route = useRoute();
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                BackHandler.exitApp();
+                return true; // Ngăn không cho back lại
+            };
+
+            BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+            return () => {
+                BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+            };
+        }, [])
+    );
+    const dispatch = useDispatch()
+    const logOut = async () => {
+        try {
+            await AsyncStorage.removeItem("token")
+            dispatch(resetUser())
+            dispatch(setIsLogin(false))
+        } catch (error) {
+            console.log("Log out Error: ", error);
+
+        }
     }
-    const {t}=useTranslation();
 
-const [open, setopen] = useState(false)
+    const { navigation } = props;
+    const { theme } = useContext(AppContext)
+    const moveToNewScreen = (screenName) => {
+        navigation.navigate(screenName, { previous_screen: route.name })
+    }
+    const { t } = useTranslation();
+
+    const [open, setopen] = useState(false)
     return (
 
-        <Wrapper style={{backgroundColor:'#ffffff'}}>
+        <Wrapper style={{ backgroundColor: theme.tertiary, paddingBottom: 70 }}>
             <ScrollView showsVerticalScrollIndicator={false}>
                 {/* HEADER */}
                 {/* <View style={styleCoProdScreen.header}>
@@ -32,11 +66,11 @@ const [open, setopen] = useState(false)
                 </View> */}
 
                 {/* PROFILE NAME */}
-                <View style={[StyleProfile.card, StyleProfile.shadow, {flexDirection:'row',marginTop:25}]}>
-                    <ImageBackground imageStyle={{ borderRadius: 10 }} style={StyleProfile.image} source={{ uri: "https://images.unsplash.com/photo-1514136649217-b627b4b9cfb2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8YmxhY2slMjBhbmQlMjB3aGl0ZSUyMG1vZGVsfGVufDB8fDB8fHww" }} />
+                <View style={[StyleProfile.card, StyleProfile.shadow, { flexDirection: 'row', marginTop: 25 }]}>
+                    <ImageBackground imageStyle={{ borderRadius: 10 }} style={StyleProfile.image} source={{ uri: userData.image ? userData.image.url : "https://images.unsplash.com/photo-1514136649217-b627b4b9cfb2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8YmxhY2slMjBhbmQlMjB3aGl0ZSUyMG1vZGVsfGVufDB8fDB8fHww" }} />
                     <View style={[StyleProfile.Para, {}]}>
-                        <Text style={[StyleProfile.boldText, {}]}>FScreation</Text>
-                        <Text style={[StyleProfile.regularText, {}]}>Fscreation441@gmail.com</Text>
+                        <Text style={[StyleProfile.boldText, {}]}>{userData.name}</Text>
+                        <Text style={[StyleProfile.regularText, {}]}>{userData.userName}</Text>
                     </View>
                 </View>
 
@@ -44,25 +78,30 @@ const [open, setopen] = useState(false)
                 {/* USER ACCESS*/}
 
                 <View style={[StyleProfile.card, StyleProfile.shadow, {}]}>
-                    <TouchableOpacity  activeOpacity={0.8} style={StyleProfile.item}>
+                    <TouchableOpacity
+                        onPress={() => moveToNewScreen("PersonalDetail")}
+                        activeOpacity={0.8} style={StyleProfile.item}>
                         <View style={StyleProfile.miniItem}>
                             <View style={StyleProfile.iconWrapper}>
-                                <Icon size={30} color={"black"} name='person'/>
+                                <Icon size={30} color={"black"} name='person' />
                             </View>
-                            <Text style={[StyleProfile.boldText,{fontSize:16,marginLeft:15}]}>Personal Details</Text>
+                            <Text style={[StyleProfile.boldText, { fontSize: 16, marginLeft: 15 }]}>{t('Personal Detail')}</Text>
                         </View>
-                        <Icon  style={{marginLeft:110}} size={25} color={"black"} name='chevron-forward'/>
+                        <Icon  size={25} color={"black"} name='chevron-forward' />
                     </TouchableOpacity>
-                    <TouchableOpacity  activeOpacity={0.8} style={StyleProfile.item}>
+                    <TouchableOpacity
+
+                        onPress={() => moveToNewScreen("OrderList")}
+                        activeOpacity={0.8} style={StyleProfile.item}>
                         <View style={StyleProfile.miniItem}>
                             <View style={StyleProfile.iconWrapper}>
-                                <Icon size={30} color={"black"} name='cart'/>
+                                <Icon size={30} color={"black"} name='cart' />
                             </View>
-                            <Text style={[StyleProfile.boldText,{fontSize:16,marginLeft:15}]}>My Order</Text>
+                            <Text style={[StyleProfile.boldText, { fontSize: 16, marginLeft: 15   }]}>{t('My Orders')}</Text>
                         </View>
-                        <Icon  style={{marginLeft:170}} size={25} color={"black"} name='chevron-forward'/>
+                        <Icon  size={25} color={"black"} name='chevron-forward' />
                     </TouchableOpacity>
-                    <TouchableOpacity  activeOpacity={0.8} style={StyleProfile.item}>
+                    {/* <TouchableOpacity  activeOpacity={0.8} style={StyleProfile.item}>
                         <View style={StyleProfile.miniItem}>
                             <View style={StyleProfile.iconWrapper}>
                                 <Icon size={30} color={"black"} name='heart'/>
@@ -70,26 +109,30 @@ const [open, setopen] = useState(false)
                             <Text style={[StyleProfile.boldText,{fontSize:16,marginLeft:15}]}>My Favourites</Text>
                         </View>
                         <Icon  style={{marginLeft:130}} size={25} color={"black"} name='chevron-forward'/>
-                    </TouchableOpacity>
-                    <TouchableOpacity  activeOpacity={0.8} style={StyleProfile.item}>
+                    </TouchableOpacity> */}
+                    <TouchableOpacity
+                        onPress={() => moveToNewScreen("ShippingAddress")}
+                        activeOpacity={0.8} style={StyleProfile.item}>
                         <View style={StyleProfile.miniItem}>
                             <View style={StyleProfile.iconWrapper}>
-                                <Icon size={30} color={"black"} name='home'/>
+                                <Icon size={30} color={"black"} name='home' />
                             </View>
-                            <Text style={[StyleProfile.boldText,{fontSize:16,marginLeft:15}]}>Shipping Address</Text>
+                            <Text style={[StyleProfile.boldText, { fontSize: 16, marginLeft: 15 }]}>{t("Shipping Address")}</Text>
                         </View>
-                        <Icon  style={{marginLeft:100}} size={25} color={"black"} name='chevron-forward'/>
+                        <Icon  size={25} color={"black"} name='chevron-forward' />
                     </TouchableOpacity>
-                    <TouchableOpacity  activeOpacity={0.8} style={StyleProfile.item}>
+                    <TouchableOpacity
+                        onPress={() => moveToNewScreen("MyCard")}
+                        activeOpacity={0.8} style={StyleProfile.item}>
                         <View style={StyleProfile.miniItem}>
                             <View style={StyleProfile.iconWrapper}>
-                                <Icon size={30} color={"black"} name='card'/>
+                                <Icon size={30} color={"black"} name='card' />
                             </View>
-                            <Text style={[StyleProfile.boldText,{fontSize:16,marginLeft:15}]}>My Card</Text>
+                            <Text style={[StyleProfile.boldText, { fontSize: 16, marginLeft: 15 }]}>{t("Payment method")}</Text>
                         </View>
-                        <Icon  style={{marginLeft:175}} size={25} color={"black"} name='chevron-forward'/>
+                        <Icon  size={25} color={"black"} name='chevron-forward' />
                     </TouchableOpacity>
-                    <TouchableOpacity  activeOpacity={0.8} style={StyleProfile.item}>
+                    {/* <TouchableOpacity  activeOpacity={0.8} style={StyleProfile.item}>
                         <View style={StyleProfile.miniItem}>
                             <View style={StyleProfile.iconWrapper}>
                                 <Icon size={30} color={"black"} name='settings'/>
@@ -97,48 +140,50 @@ const [open, setopen] = useState(false)
                             <Text style={[StyleProfile.boldText,{fontSize:16,marginLeft:15}]}>Settings</Text>
                         </View>
                         <Icon  style={{marginLeft:175}} size={25} color={"black"} name='chevron-forward'/>
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                    onPress={()=>setopen(true)}
-                    activeOpacity={0.8} style={StyleProfile.item}>
+                    </TouchableOpacity> */}
+                    <TouchableOpacity
+                        onPress={() => setopen(true)}
+                        activeOpacity={0.8} style={StyleProfile.item}>
                         <View style={StyleProfile.miniItem}>
                             <View style={StyleProfile.iconWrapper}>
-                                <Icon size={30} color={"black"} name='settings'/>
+                                <Icon size={30} color={"black"} name='settings' />
                             </View>
-                            <Text style={[StyleProfile.boldText,{fontSize:16,marginLeft:15}]}>{t("language")}</Text>
+                            <Text style={[StyleProfile.boldText, { fontSize: 16, marginLeft: 15 }]}>{t("language")}</Text>
                         </View>
-                        <Icon  style={{marginLeft:150}} size={25} color={"black"} name='chevron-forward'/>
+                        <Icon size={25} color={"black"} name='chevron-forward' />
                     </TouchableOpacity>
-                    <Language open={open} setOpened={setopen}/>
+                    <Language open={open} setOpened={setopen} />
 
                 </View>
                 <View style={[StyleProfile.card, StyleProfile.shadow, {}]}>
-                    <TouchableOpacity  activeOpacity={0.8} style={StyleProfile.item}>
+                    <TouchableOpacity activeOpacity={0.8} style={StyleProfile.item}>
                         <View style={StyleProfile.miniItem}>
                             <View style={StyleProfile.iconWrapper}>
-                                <Icon size={30} color={"black"} name='alert-circle'/>
+                                <Icon size={30} color={"black"} name='alert-circle' />
                             </View>
-                            <Text style={[StyleProfile.boldText,{fontSize:16,marginLeft:15}]}>FAQs</Text>
+                            <Text style={[StyleProfile.boldText, { fontSize: 16, marginLeft: 15 }]}>{t("FAQs")}</Text>
                         </View>
-                        <Icon  style={{marginLeft:200}} size={25} color={"black"} name='chevron-forward'/>
+                        <Icon  size={25} color={"black"} name='chevron-forward' />
                     </TouchableOpacity>
-                    <TouchableOpacity  activeOpacity={0.8} style={StyleProfile.item}>
+                    <TouchableOpacity activeOpacity={0.8} style={StyleProfile.item}>
                         <View style={StyleProfile.miniItem}>
                             <View style={StyleProfile.iconWrapper}>
-                                <Icon size={30} color={"black"} name='bug'/>
+                                <Icon size={30} color={"black"} name='bug' />
                             </View>
-                            <Text style={[StyleProfile.boldText,{fontSize:16,marginLeft:15}]}>Privacy Policy</Text>
+                            <Text style={[StyleProfile.boldText, { fontSize: 16, marginLeft: 15 }]}>{t("Privacy Policy")}</Text>
                         </View>
-                        <Icon  style={{marginLeft:127}} size={25} color={"black"} name='chevron-forward'/>
+                        <Icon  size={25} color={"black"} name='chevron-forward' />
                     </TouchableOpacity>
-                    <TouchableOpacity  activeOpacity={0.8} style={StyleProfile.item}>
+                    <TouchableOpacity
+                        onPress={() => logOut()}
+                        activeOpacity={0.8} style={StyleProfile.item}>
                         <View style={StyleProfile.miniItem}>
                             <View style={StyleProfile.iconWrapper}>
-                                <Icon size={30} color={"black"} name='log-out'/>
+                                <Icon size={30} color={"black"} name='log-out' />
                             </View>
-                            <Text style={[StyleProfile.boldText,{fontSize:16,marginLeft:15}]}>Log Out</Text>
+                            <Text style={[StyleProfile.boldText, { fontSize: 16, marginLeft: 15 }]}>{t("Log out")}</Text>
                         </View>
-                        <Icon  style={{marginLeft:180}} size={25} color={"black"} name='chevron-forward'/>
+                        <Icon  size={25} color={"black"} name='chevron-forward' />
                     </TouchableOpacity>
 
                 </View>

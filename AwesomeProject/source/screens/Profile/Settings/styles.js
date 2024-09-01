@@ -10,8 +10,9 @@ export const StyleSettingScreen = StyleSheet.create({
         borderRadius: 22,
         paddingTop: 15,
         paddingBottom: 20,
-        borderColor: '#b6b4b4',
-        marginTop:11
+        
+        marginTop:11,
+  
     },
     viewOption: {
         flexDirection: 'row',
@@ -26,6 +27,6 @@ export const StyleSettingScreen = StyleSheet.create({
         flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '25%'
     },
     viewIcon: {
-        backgroundColor: '#efefef', padding: 7, borderRadius: 8, marginRight: 20, width:40, height:40, alignItems:'center', justifyContent:'center'
+         padding: 7, borderRadius: 8, marginRight: 20, width:40, height:40, alignItems:'center', justifyContent:'center'
     }
 })

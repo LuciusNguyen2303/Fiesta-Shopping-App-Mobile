@@ -18,91 +18,102 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 import AxiosInstance from '../../util/AxiosInstance'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import Wrapper from '../../components/Wrapper'
+import Button from '../../components/Button/Button'
+import { useDispatch, useSelector } from 'react-redux'
+import { isLoginSelector, setIsLogin, setUserData } from '../../redux-store'
+import { useTranslation } from 'react-i18next'
 const Login = (props) => {
   const { navigation } = props;
   const [isModeApply, setisModeApply] = useState("LIGHT_MODE")
   // const { isLogin, setisLogin } = useContext(AppContext)
   const [username, setusername] = useState('');
   const [password, setpassword] = useState('');
-  // change darklightmode function
-  // const toggleMode = () => {
-  //   setisModeApply((prevMode) => (prevMode === "LIGHT_MODE" ? "DARK_MODE" : "LIGHT_MODE"));
+  const dispatch = useDispatch()
+  // // change darklightmode function
+  // // const toggleMode = () => {
+  // //   setisModeApply((prevMode) => (prevMode === "LIGHT_MODE" ? "DARK_MODE" : "LIGHT_MODE"));
+  // // };
+  // // const theme = LIGHT_DARK_MODE(isModeApply);
+
+  // // signinFacebook
+  // const facebookLogin = async () => {
+  //   try {
+  //     const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
+  //     if (result.isCancelled) {
+  //       console.log('Đăng nhập bị hủy');
+  //     } else {
+  //       const currentProfile = await Profile.getCurrentProfile().then(
+  //         function (currentProfile) {
+  //           if (currentProfile) {
+  //             console.log("Tên người dùng Facebook: " +
+  //               currentProfile.name + " userID: " + currentProfile.userID
+  //             );
+  //             createToken(currentProfile.userID)
+  //           }
+  //         }
+  //       );
+  //     }
+  //   } catch (error) {
+  //     console.log('Lỗi đăng nhập: ', error);
+  //   }
   // };
-  // const theme = LIGHT_DARK_MODE(isModeApply);
-
-  // signinFacebook
-  const facebookLogin = async () => {
-    try {
-      const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
-      if (result.isCancelled) {
-        console.log('Đăng nhập bị hủy');
-      } else {
-        const currentProfile = await Profile.getCurrentProfile().then(
-          function (currentProfile) {
-            if (currentProfile) {
-              console.log("Tên người dùng Facebook: " +
-                currentProfile.name + " userID: " + currentProfile.userID
-              );
-              createToken(currentProfile.userID)
-            }
-          }
-        );
-      }
-    } catch (error) {
-      console.log('Lỗi đăng nhập: ', error);
-    }
-  };
-  //  Google login
+  // //  Google login
 
 
-  GoogleSignin.configure({
-    webClientId: '1004261782493-85h6acr55sfjv0usi1o98s62h6n3c6ev.apps.googleusercontent.com',
-  });
+  // GoogleSignin.configure({
+  //   webClientId: '1004261782493-85h6acr55sfjv0usi1o98s62h6n3c6ev.apps.googleusercontent.com',
+  // });
 
-  async function onGoogleButtonPress() {
+  // async function onGoogleButtonPress() {
 
-    try {
-      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-      // Get the users ID token
-      const { idToken } = await GoogleSignin.signIn();
+  //   try {
+  //     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+  //     // Get the users ID token
+  //     const { idToken } = await GoogleSignin.signIn();
 
-      // Create a Google credential with the token
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+  //     // Create a Google credential with the token
+  //     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
-      // Sign-in the user with the credential
-      auth().signInWithCredential(googleCredential);
-      ToastAndroid.show("User sign in by google successfully" + idToken,ToastAndroid.LONG);
-      GoogleSignin.signOut();
-    } catch (error) {
-      console.log("Function onGoogleButtonPress error: " + error);
-    }
-    //  Nos laf token nha
-  }
+  //     // Sign-in the user with the credential
+  //     auth().signInWithCredential(googleCredential);
+  //     ToastAndroid.show("User sign in by google successfully" + idToken,ToastAndroid.LONG);
+  //     GoogleSignin.signOut();
+  //   } catch (error) {
+  //     console.log("Function onGoogleButtonPress error: " + error);
+  //   }
+  //   //  Nos laf token nha
+  // }
 
-  // createToken when logged in facebook
-  const createToken = async (userID) => {
-    const response = await AxiosInstance.post('jwtApi/facebookSignin?id=' + userID);
-    if (response.accessToken) {
-      console.log('accessToken: ' + response.accessToken);
-      await AsyncStorage.setItem('accessToken', response.accessToken)
-    }
-  }
+  // // createToken when logged in facebook
+  // const createToken = async (userID) => {
+  //   const response = await AxiosInstance.post('jwtApi/facebookSignin?id=' + userID);
+  //   if (response.accessToken) {
+  //     console.log('accessToken: ' + response.accessToken);
+  //     await AsyncStorage.setItem('accessToken', response.accessToken)
+  //   }
+  // }
 
-  // get accessToken from AsyncStorage
-  const getIemFromAsyncStorage = async (key) => {
-    const accessToken = await AsyncStorage.getItem(key)
-    if (accessToken) {
-      console.log('accessToken from AsyncStorage: ' + accessToken);
-    }
-  }
+  // // get accessToken from AsyncStorage
+  // const getIemFromAsyncStorage = async (key) => {
+  //   const accessToken = await AsyncStorage.getItem(key)
+  //   if (accessToken) {
+  //     console.log('accessToken from AsyncStorage: ' + accessToken);
+  //   }
+  // }
 
   //signin with mongo DB
   const login = async () => {
+    if(!username && !password) ToastAndroid.show("No username or id",ToastAndroid.SHORT)
     try {
       const response = await AxiosInstance.post('userApi/login', { userName: username, password: password })
       console.log('response: ' + JSON.stringify(response));
-      if (response.data && response.result === true) {
-        ToastAndroid.show('Signin Successful', ToastAndroid.SHORT)
+      if (response.token && response.result === true) {
+        await AsyncStorage.setItem("token",response.token)
+        dispatch(setUserData(response.user))
+        ToastAndroid.show('Signin Successful', ToastAndroid.SHORT);
+        dispatch(setIsLogin(true))
+
       } else if (response.result === false) {
         ToastAndroid.show('Signin Failed', ToastAndroid.SHORT)
       }
@@ -119,41 +130,40 @@ const Login = (props) => {
     setusername(text)
   }
   //textInput handler
-
+const {t} = useTranslation()
   return (
-    <View style={AppStyles.StyleLogin.container}>
+    <Wrapper >
       <ImageBackground resizeMode='cover' source={require('../../assets/images/logo.jpg')} style={{ height: 180 }}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={{ margin: 10 }}>
+          style={{ margin: 10,marginLeft:0 }}>
           <MetarialIcon name='arrow-back' color='black' size={30} />
         </TouchableOpacity>
       </ImageBackground>
       <View style={commonStyles.container}>
         <Text style={[commonStyles.title, { color: 'black', fontSize: 22 }]}>
-          Welcome!
+          {t("Welcome")}!
         </Text>
         <Text style={commonStyles.normalText}>
-          Please login or sign up to continue our app
+          {t("Sign-in-remind")}
         </Text>
         <View style={{ marginTop: 50 }}>
           <MySection label='Email' />
-          <MyTextInput placeholder='Enter your email' onChangeText={userNameHandler} />
+          <MyTextInput placeholder={t("email-placeholder")} onChangeText={userNameHandler} />
         </View>
         <View style={{ marginTop: 25 }}>
-          <MySection label='Password' />
-          <MyTextInputPassword placeholder='Enter your password' onChangeText={passwordHandler} />
+          <MySection label={t("Password")} />
+          <MyTextInputPassword placeholder={t("password-placeholder")} onChangeText={passwordHandler} />
         </View>
         <View style={{ marginTop: 20 }}>
-          <TouchableOpacity
-            onPress={login}
-            style={[commonStyles.btnAccess_dark, { backgroundColor: 'black' }]}>
-            <Text style={commonStyles.textBtnAccess_dark}>
-              Login
-            </Text>
-          </TouchableOpacity>
-          <LineWithTextBetween />
-          <View>
+          <Button
+          onPress={()=>login()}
+            title={t("Sign in")}
+            styleButton={{backgroundColor:'black',width:'100%'}}
+            styleText={{color:'white'}}
+          />
+          {/* <LineWithTextBetween /> */}
+          {/* <View>
             <SocialSignInButton
               onPress={() => facebookLogin()}
               iconName='facebook'
@@ -187,10 +197,10 @@ const Login = (props) => {
                 label='Continue with Apple'
               />
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
       </View>
-    </View>
+    </Wrapper>
   )
 }
 

@@ -1,16 +1,15 @@
 import { View, Text, ScrollView } from 'react-native'
-import React from 'react'
+import React, { useContext } from 'react'
+import { AppContext } from '../util/AppContext'
 // import PropTy
 const Wrapper = ({children,style}) => {
   // const {style}=props;
+  const {theme} = useContext(AppContext)
   return (
-    <View style={[style,{paddingHorizontal:15}]}>
+    <View style={[{paddingHorizontal:15,backgroundColor:'white', height:'100%'},style]}>
       {children}
-      {/* <Text>{style}</Text> */}
     </View>
   )
 }
-// Wrapper.propTypes = {
-//   style: PropTypes.object // Kiểm tra kiểu dữ liệu của style là một object
-// };
+
 export default Wrapper

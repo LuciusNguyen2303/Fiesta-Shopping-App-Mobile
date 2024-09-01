@@ -3,7 +3,9 @@ import { View, Text, StyleSheet, Easing } from "react-native";
 import { POPPINS_FONT } from "../../css/theme/Theme";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Animated } from "react-native";
-import { useEffect, useRef,useCallback } from "react";
+import { useEffect, useRef,useCallback, useContext } from "react";
+import { AppContext } from "../../util/AppContext";
+import { useTranslation } from "react-i18next";
 export const FoundationIcon = ({ name, size, color }) => {
     {
         return (
@@ -14,7 +16,7 @@ export const FoundationIcon = ({ name, size, color }) => {
 export const FocusedFoundationIcon = ({ name, size, color, label, focused }) => {
     const animatedValue = useRef(new Animated.Value(0)).current;
     const spinAnimationValue = useRef(new Animated.Value(0)).current;
-
+    const {theme} =useContext(AppContext)
     const navigation= useNavigation();
     const otherAnimation = Animated.timing(animatedValue, {
         toValue: 95,
@@ -30,7 +32,7 @@ export const FocusedFoundationIcon = ({ name, size, color, label, focused }) => 
     const spinAnimation =
         Animated.timing(spinAnimationValue, {
             toValue: 1,
-            duration: 300,
+            duration: 400,
             easing: Easing.linear,
             useNativeDriver: false,
         })
@@ -39,41 +41,6 @@ export const FocusedFoundationIcon = ({ name, size, color, label, focused }) => 
         // Next, interpolate beginning and end values (in this case 0 and 1)
      
     // animation trượt từ trái sang
-
-
-
-
-
-    
-    // useEffect(() => {
-    //     const unsubscribe = navigation.addListener('tabPress', (e) => {
-    //         // Prevent default behavior
-        
-    //         // Do something manually
-    //         // ...
-    //         console.log("afhaskfhasfkl: " +focused);
-    //         const otherAnimation = Animated.timing(animatedValue, {
-    //             toValue: 95,
-    //             duration: 1000,
-    //             useNativeDriver: false,
-    //         })
-    //         // if (focused === true) {
-    //             // Bắt đầu animation khi được focus
-    //             otherAnimation.start();
-    //         // } else 
-    //         // if (focused === false) {
-    //             // Dừng animation khi không được focus
-    //             // Animated.parallel(otherAnimation).stop();
-    //         // }
-    //         setTimeout(() => {
-                
-    //         }, timeout);
-
-    //       });
-      
-    //       return unsubscribe;
-    // }, [navigation])
-    
     useFocusEffect(
         useCallback(() => {
             spinAnimation.start();
@@ -86,14 +53,17 @@ export const FocusedFoundationIcon = ({ name, size, color, label, focused }) => 
           };
         }, [])
       );
+      const {t} = useTranslation()
     return (
         <View style={styles.bgIconFocused}>
             <Animated.View
-                style={[styles.viewIconFocused,{transform:[{rotate:spin}]}]}>
-                <Icon name={name} color={color} size={size} />
+                style={[styles.viewIconFocused,
+                // {transform:[{rotate:spin}]}
+                ]}>
+                <Icon name={name} color={color} size={size} style={{borderRadius:200}} />
             </Animated.View >
-            <Animated.View style={{ zIndex: 0, width: animatedValue, backgroundColor: '#EEEEEE', marginLeft: -35, borderRadius: 30, padding: 5 }}>
-                <Text style={styles.label} numberOfLines={1}>{label}</Text>
+            <Animated.View style={{ zIndex: 0, width: animatedValue, backgroundColor: '#b1b1b1', marginLeft: -35, borderRadius: 30, padding: 5 }}>
+                <Text style={[styles.label,{color:'black'}]} numberOfLines={1}>{t(label)}</Text>
             </Animated.View>
         </View>
     )
@@ -110,14 +80,15 @@ export const RenderIcon = ({ name, size, color, label, focused }) => {
 const styles = StyleSheet.create({
     viewIconFocused: {
         backgroundColor: 'black',
-        width: '45%',
+        width: 50,
+        borderRadius: 100,
         alignItems: "center",
         justifyContent: 'center',
-        borderRadius: 50, padding: 8, marginLeft: 0, zIndex: 1
+         padding: 8, marginLeft: 0, zIndex: 1
     },
     bgIconFocused: {
-        boderRadius: 20, width: 'auto', paddingRight: 5,
-        borderRadius: 50, flexDirection: 'row', alignItems: 'center'
+       borderRadius: 20, width: 'auto', paddingRight: 5,
+        borderRadius: 100, flexDirection: 'row', alignItems: 'center'
     },
     label: {
         fontFamily: POPPINS_FONT.black,

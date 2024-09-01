@@ -1,42 +1,42 @@
 export const dataCategory = [
     {
-        "id": 1,
+        "_id": 1,
         "name": "Jackets"
     },
     {
-        "id": 2,
+        "_id": 2,
         "name": "Jeans"
     },
     {
-        "id": 3,
+        "_id": 3,
         "name": "Shoese"
     },
     {
-        "id": 4,
+        "_id": 4,
         "name": "Bags"
     },
     {
-        "id": 5,
+        "_id": 5,
         "name": "Clothes"
     },
     {
-        "id": 6,
+        "_id": 6,
         "name": "Shorts"
     },
     {
-        "id": 7,
+        "_id": 7,
         "name": "Lingenies"
     },
     {
-        "id": 8,
+        "_id": 8,
         "name": "Sneakers"
     },
     {
-        "id": 9,
+        "_id": 9,
         "name": "Tops"
     },
     {
-        "id": 10,
+        "_id": 10,
         "name": "Cots"
     }
 ]

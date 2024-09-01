@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, ScrollView, TextInput, TouchableOpacity, StatusBar, ImageBackground, SafeAreaView, Modal, StyleSheet, FlatList } from 'react-native';
+import { View, Text, ScrollView, TextInput, TouchableOpacity, StatusBar, ImageBackground, SafeAreaView, Modal, StyleSheet, FlatList, Alert, ToastAndroid } from 'react-native';
 import StyleProductDetail from './styles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { StylePublic, commonStyles } from '../../css/styles/public';
@@ -10,201 +10,323 @@ import { Dimensions } from 'react-native';
 import { styleCart } from '../Cart/styles';
 import { StarRatingDisplay } from 'react-native-star-rating-widget';
 import { POPPINS_FONT } from '../../css/theme/Theme';
+import { useNavigation } from '@react-navigation/native';
+import AxiosInstance from '../../util/AxiosInstance';
+import ImageDisplayModal from '../../components/ImageDisplayModal/ImageDisplayModal';
+import { useSelector } from 'react-redux';
+import { dataUserSelector } from '../../redux-store';
+import { useTranslation } from 'react-i18next';
 const height = Dimensions.get('screen').height
 const width = Dimensions.get('screen').width;
 
-const ProductDetail = () => {
+const ProductDetail = ({ route }) => {
+  const { productId, screenName } = route.params
 
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [header, setHeader] = useState(true);
   const [quantity, setQuantity] = useState(1)
-  const [color, setColor] = useState({})
-  const [size, setSize] = useState({})
-
+  const { t } = useTranslation()
+  const [data, setData] = useState(null)
+  const [dimensions, setDimensions] = useState(null)
+  const [images, setImages] = useState([])
+  const [dimensionKeys, setDimensionKeys] = useState([])
   // 
-  const [modalPosition, setModalPosition] = useState({ top: 0, right: 0 });
+  const userData = useSelector(dataUserSelector)
   const [numLines, setNumLines] = useState(3)
-  const touchableOpacityRef = useRef(null);
-
-  const measureView = () => {
-    if (touchableOpacityRef.current) {
-      touchableOpacityRef.current.measure((fx, fy, width, height, px, py) => {
-        setModalPosition({ top: py, right: 0 });
-        console.log(fx, fy, width, height, px, py);
-        setModalVisible(true);
-      });
-    }
-  };
+  const [imageDisplayVisible, setImageDisplayVisible] = useState(false)
+  const [indexImage, setIndexImage] = useState(0)
   const lorem_ipsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Gravida in fermentum et sollicitudin ac orci phasellus egestas tellus. Leo vel fringilla est ullamcorper eget nulla. Mi bibendum neque egestas congue quisque egestas diam in. In vitae turpis massa sed elementum tempus egestas sed. Sed odio morbi quis commodo odio aenean sed. Aenean et tortor at risus viverra. Quam viverra orci sagittis eu volutpat odio facilisis mauris. Id eu nisl nunc mi ipsum faucibus vitae aliquet nec. Nisi lacus sed viverra tellus in hac habitasse platea. Mauris in aliquam sem fringilla ut. Convallis a cras semper auctor neque vitae tempus quam pellentesque. Ipsum a arcu cursus vitae congue mauris rhoncus.";
+  const [variationId, setVariationId] = useState(null)
+  const [selectedDimension, setSelectedDimension] = useState({})
+  const [stock, setStock] = useState(0)
+  const navigation = useNavigation()
+  const state = navigation.getState();
+  const routes = state.routes;
+  const previousRoute = routes[routes.length - 2]; // Screen trước screen hiện tại
+
+  // if (previousRoute) {
+  //   console.log('Tên screen trước đó là:', previousRoute.name);
+  // }
   const paragraphLimit = () => {
     if (numLines == 0)
       setNumLines(3)
     else
       setNumLines(0)
   }
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
+
+  const handleItemImageClick = (index) => {
+    setIndexImage(index);
+    setImageDisplayVisible(true)
+
+  }
   const Header = (props) => {
     return (
       <View
       >
-        <View style={[styleCoProdScreen.header, { marginTop: -440 }]}>
+        <View style={[styleCoProdScreen.header, { marginTop: "-125%" }]}>
 
-          <TouchableOpacity style={{ marginLeft: 10 }} onPress={() => console.log("back")}>
-            <Icon name="arrow-back-circle" color={"white"} size={50} />
+          <TouchableOpacity
+
+            style={{ marginLeft: 10 }} onPress={() => navigation.goBack()}>
+            <Icon name="arrow-back-circle" color={"black"} size={50} />
 
           </TouchableOpacity>
-          <TouchableOpacity style={{ marginRight: 10 }} onPress={() => console.log("search")}>
-            <Icon name="cart-outline" color={"white"} size={40} />
-
-          </TouchableOpacity >
+          <View />
         </View>
       </View>
     )
   }
+  const getDataProductDetail = async () => {
+    try {
+      const response = await AxiosInstance.get(`productApi/getProductByID?id=${productId}`);
+      if (response.result) {
+        console.log(response.data);
+
+        setData(response.data)
+        getAttributeFromData(response.data)
+        console.log(JSON.stringify(response.data));
+      }
+
+    } catch (error) {
+      console.log("Get data product detail error: ", error);
+    }
+  }
+  const checkStockProduct = async (variationId) => {
+    try {
+      const response = await AxiosInstance.get(`productApi/getStockProduct?productId=${data._id}&variationId=${variationId}`)
+      if (response.result)
+        setStock(Number(response.data[0].stock))
+      console.log(response.data[0]);
+    } catch (error) {
+      console.log("checkStockProduct: ", error);
+    }
+  }
+  const getAttributeFromData = (data) => {
+    let imageList = []
+    let dimensionsOpt = {}
+    let dimensionKeyss = []
+    //  Get image list for slideshow
+    if (typeof data.images !== 'undefined' && data.images.length > 0)
+      imageList = [...imageList, ...data.images]
+
+    // Get dimension to show 
+    if (typeof data.variations !== 'undefined' && data.variations.length > 0) {
+
+
+      if (typeof data.variations[0].dimension !== 'undefined')
+        dimensionKeyss = Object.keys(data.variations[0].dimension)
+
+      data.variations.map((item, index) => {
+        if (typeof item.subImage.url !== 'undefined')
+          imageList.push(item.subImage)
+
+        if (typeof item.dimension !== 'undefined') {
+
+          dimensionKeyss.forEach((key, index) => {
+            if (typeof dimensionsOpt[key] !== 'undefined' && Array.isArray(dimensionsOpt[key]))
+              dimensionsOpt[key].push(item.dimension[key])
+            else
+              dimensionsOpt[key] = [item.dimension[key]]
+
+          })
+        }
+      })
+    }
+    setImages(imageList)
+    setDimensionKeys(dimensionKeyss)
+    setDimensions(dimensionsOpt)
+
+  }
+
+  useEffect(() => {
+    getDataProductDetail()
+
+    return () => {
+
+    }
+  }, [])
+  const setStyleBottomNavigion = () => {
+    const style = previousRoute.name == "Home" ? {
+      display: 'flex',
+      backgroundColor: "white", position: 'absolute', borderTopLeftRadius: 30,
+      borderTopRightRadius: 30, height: 70, paddingLeft: 30, paddingRight: 30,
+    } : { display: 'none' }
+
+    return style
+  }
+  useEffect(() => {
+    navigation.getParent().getParent()?.setOptions({
+      tabBarStyle: {
+        display: 'none'
+      }
+    });
+    navigation.getParent()?.setOptions({
+      tabBarStyle: {
+        display: 'none'
+      }
+    });
+    setStyleBottomNavigion()
+    return () => {
+      navigation.getParent()?.setOptions({
+        tabBarStyle: setStyleBottomNavigion()
+      })
+    };
+  }, [navigation]);
+  useEffect(() => {
+    if (data && typeof data.variations !== 'undefined' && Object.keys(selectedDimension).length == dimensionKeys.length) {
+      const newarr = data.variations.filter(item => {
+        return JSON.stringify(item.dimension) == JSON.stringify(selectedDimension)
+      })
+      if (newarr.length > 0) {
+        checkStockProduct(newarr[0]._id)
+        setVariationId(newarr[0]._id)
+      }
+      else {
+        setVariationId(null)
+        setStock(0)
+      }
+    } else {
+      setVariationId(null)
+      setStock(0)
+    }
+
+    return () => {
+
+    }
+  }, [selectedDimension])
+
+  const addToCart = async () => {
+
+    try {
+      const newCart = { userId: userData._id, quantity: quantity, variationId: variationId, productId: data._id }
+
+      const response = await AxiosInstance.post("cart/add", { addFields: newCart })
+      if (response.result)
+        ToastAndroid.show("ADD TO CART SUCCESSFULLY", ToastAndroid.SHORT)
+      console.log("Cart", response);
+
+    } catch (error) {
+      console.log("ADD TO CART ERROR: ", error);
+    }
+  }
+
   return (
     <View>
       <ScrollView
-      showsVerticalScrollIndicator={false}
-      stickyHeaderIndices={[2]}
+        showsVerticalScrollIndicator={false}
+        stickyHeaderIndices={[2]}
+        style={{backgroundColor:'white'}}
       >
         <View style={{ flex: 1 }}>
           <Slideshow
-
+            onItemClick={handleItemImageClick}
             children={Header}
             isAutoSroll={false}
             width={'100%'}
-            imagesource={dataImage}
+            imagesource={images}
             flex={0.8}
             image
             heightRate={0.7}
             paginationEnabled={true}
           />
           <Header />
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={[StyleProductDetail.favorite,]}
-          >
-            <Icon name='heart' size={25} color={'black'} />
-          </TouchableOpacity>
+
 
         </View>
-        <View style={StyleProductDetail.BigView}>
+
+        <View style={[StyleProductDetail.BigView,{borderWidth:0.5,borderColor:'gray'}]}>
           <Wrapper>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <View>
-                <Text style={StyleProductDetail.title}>Luciusxury</Text>
-                <Text style={StyleProductDetail.regular}>The space</Text>
+                <View style={{}}>
+
+                </View>
+                <Text style={StyleProductDetail.title}>{data ? data.name : ""}</Text>
+                {/* <Text style={StyleProductDetail.regular}>The space</Text> */}
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <StarRatingDisplay
-                    rating={4.5}
+                    rating={data ? data.rating : 0}
                     style={{ width: 110, height: 30, alignItems: 'center' }}
                     starSize={20}
                     starStyle={{ width: 10 }}
                   />
-                  <Text>
+                  {/* <Text>
                     ( 259 Reviews )
-                  </Text>
+                  </Text> */}
                 </View>
 
               </View>
               <View style={{ alignSelf: 'center', alignItems: 'flex-end', marginTop: 8 }}>
                 <View style={[StyleProductDetail.quantity, { backgroundColor: '#e4e4e4', }]}>
-                  <TouchableOpacity >
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (quantity > 1)
+                        setQuantity(prev => prev - 1)
+
+                    }}
+                  >
                     <Text style={[, { fontFamily: POPPINS_FONT.regular, fontSize: 13, afontSize: 15, margin: 0 }]}>-</Text>
                   </TouchableOpacity>
                   <TextInput style={[, { fontFamily: POPPINS_FONT.regular, fontSize: 14, textAlign: 'center', height: 50, color: 'black', margin: 0 }]} value={"" + quantity} onChangeText={(text) => setQuantity(text)}></TextInput>
-                  <TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (quantity < 100)
+                        setQuantity(prev => prev + 1)
+
+                    }}
+                  >
                     <Text style={[, { fontFamily: POPPINS_FONT.regular, fontSize: 13, fontSize: 15, margin: 0 }]}>+</Text>
                   </TouchableOpacity>
                 </View>
-                <Text style={[StyleProductDetail.title, { fontSize: 14, marginTop: 15, marginBottom: 10 }]} >Available in stock</Text>
+                <Text style={[StyleProductDetail.title, { fontSize: 14, marginTop: 15, marginBottom: 10 }]} >{stock} in stock</Text>
               </View>
             </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-              <View>
-                <Text
-                  style={[StyleProductDetail.title, { fontSize: 17, margin: 10 }]}
-                >Size</Text>
-                <FlatList
-                  horizontal
-                  data={dataSize}
-                  nestedScrollEnabled={true}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity
-                      style={[StyleProductDetail.itemSizeView, {
-                        marginHorizontal: 2,
-                        backgroundColor: size._id == item._id ? "gray" : "white",
+            <View style={{ flexDirection: 'column', justifyContent: 'space-between' }}>
 
-                      }]}
-                      onPress={() => { if (size._id == item._id) setSize({}); else setSize(item); }}
+              {
+                dimensionKeys.length > 0 &&
+                dimensionKeys.map((key) => {
+                  return (
+                    <View
+
                     >
-                      {Object.keys(color).length > 0 && color._id == item._id ?
-                        <Icon name='checkmark-outline' size={20} color={'gray'} /> :
-                        <Text style={[{ fontFamily: POPPINS_FONT.regular, color: size._id == item._id ? "white" : "gray" }]}>{item.size}</Text>}
-
-                    </TouchableOpacity>)}
-                />
-              </View>
-              <View style={{ alignItems: 'flex-end' }}>
-                <Text
-                  style={[StyleProductDetail.title, { fontSize: 17, marginVertical: 10 }]}
-
-                >Color</Text>
-                {/* <FlatList 
-              data={dataSize}
-              renderItem={(item)=>(<)}
-              /> */}
-                <View style={[StyleProductDetail.itemView,]}>
-                  <TouchableOpacity
-                    activeOpacity={0.5}
-                    ref={touchableOpacityRef}
-                    style={[StyleProductDetail.colorView, StylePublic.shadow, {
-                      backgroundColor: Object.keys(color).length > 0 ? color.color : 'gray'
-                    }]}
-                    onPress={() => { measureView(this.viewRef) }}
-                  ></TouchableOpacity>
-                  <Modal
-                    transparent={true}
-                    animationType="fade"
-                    visible={isModalVisible}
-                    onRequestClose={toggleModal}
-                    style={[StyleProductDetail.modal,
-                    ]}
-                  >
-                    <View style={[StyleProductDetail.modalContent, StylePublic.shadow,
-                    {
-                      position: 'absolute',
-                      top: modalPosition.top - 150, // Điều chỉnh vị trí top để đặt dialog gần nút "Show Dialog"
-                      right: 15
-                    }
-                    ]}>
-                      <FlatList
-                        style={{}}
-                        showsVerticalScrollIndicator={false}
-                        renderItem={({ item }) => (
+                      <Text
+                        style={[StyleProductDetail.title, { fontSize: 17, margin: 10 }]}
+                      >{key.toUpperCase()}</Text>
+                      <View
+                        style={{ flexDirection: 'row', flexWrap: 'wrap' }}
+                      >
+                        {dimensions && dimensions[key].map((item) => (
                           <TouchableOpacity
                             activeOpacity={0.5}
-                            style={[StyleProductDetail.colorView, StylePublic.shadow, {
-                              backgroundColor: item.color,
-                              marginVertical: 4,
-                              borderWidth: 0.5,
-                              borderColor: '#9b9b9bfe'
-                            }]}
-                            onPress={() => { if (color._id == item._id) setColor({}); else setColor(item); setModalVisible(false) }}
-                          >
-                            {Object.keys(color).length > 0 && color._id == item._id ? <Icon name='checkmark-outline' size={20} color={'gray'} /> : <View />}
-                          </TouchableOpacity>
-                        )}
-                        data={dataColor}
+                            style={[StyleProductDetail.itemSizeView, {
+                              marginHorizontal: 5,
+                              backgroundColor: selectedDimension[key] == item ? "#000000" : "white",
 
-                      />
+                            }]}
+
+                            onPress={() => {
+                              if (typeof selectedDimension[key] == 'undefined' || selectedDimension[key] !== item)
+                                setSelectedDimension({ ...selectedDimension, [key]: item })
+                              else {
+                                let selectedDimension2 = { ...selectedDimension }
+                                delete selectedDimension2[key]
+                                setSelectedDimension(selectedDimension2)
+                              }
+
+                            }}
+                          >
+
+                            <Text style={[{ fontFamily: POPPINS_FONT.regular, color: selectedDimension[key] == item ? "white" : "black" }]}>{item}</Text>
+
+                          </TouchableOpacity>))}
+                      </View>
                     </View>
-                  </Modal>
-                </View>
-              </View>
+                  )
+                })
+              }
+
             </View>
+
+
             <View>
               <Text style={[StyleProductDetail.title, { fontSize: 17, marginVertical: 10 }]}>Description</Text>
               <View>
@@ -213,122 +335,64 @@ const ProductDetail = () => {
                   ellipsizeMode='tail'
                   numberOfLines={numLines}
                 >
-                  {lorem_ipsum}
+                  {data ? data.Description : ""}
 
                 </Text>
                 {numLines == 3 && <Text
                   onPress={() => paragraphLimit()}
-                  style={[StyleProductDetail.regular, {}]}>See more</Text>}
+                  style={[StyleProductDetail.regular, {}]}>{t("See more")}</Text>}
 
                 {numLines == 0 && <Text
                   onPress={() => paragraphLimit()}
-                  style={[StyleProductDetail.regular, {}]}>See less</Text>}
+                  style={[StyleProductDetail.regular, {}]}>{t("See less")}</Text>}
               </View>
             </View>
 
           </Wrapper>
         </View>
+        {images.length > 0 &&
+          <ImageDisplayModal
+            imageArray={images}
+            visible={imageDisplayVisible}
+            onClose={() => { setImageDisplayVisible(false) }}
+            index={indexImage}
+          />
+        }
 
-       
       </ScrollView>
-      <View style={{position:'absolute',bottom:0}}>
-      <Wrapper>
+      <View style={{ position: 'absolute', bottom: 0 }}>
+        <Wrapper>
           <View style={[StyleProductDetail.addCartView, {}]}>
             <View>
-              <Text style={[StyleProductDetail.regular, { color: '#d1c8c8' }]}>Total Price</Text>
-              <Text style={[StyleProductDetail.title, { color: '#000000' }]}>$245.00</Text>
+              <Text style={[StyleProductDetail.regular, { color: '#d1c8c8' }]}>{t("Total Price")}</Text>
+              <Text style={[StyleProductDetail.title, { color: '#000000' }]}>${variationId == null ? 0 : quantity * Number(data.variations.filter((item) => { return item._id == variationId })[0].price)}</Text>
             </View>
-            <TouchableOpacity 
-            style={[
-              commonStyles.btnAccess_dark
-              ,{
-              backgroundColor:'black',
-              width:220,
-              flexDirection:'row',
-              alignItems:'center',
-              justifyContent:'center',
-              padding:10
-            }]}
+            <TouchableOpacity
+              disabled={stock > 0 ? false : true}
+              onPress={() => {
+                addToCart()
+
+              }}
+              style={[
+                commonStyles.btnAccess_dark
+                , {
+                  backgroundColor: stock > 0 ? 'black' : 'gray',
+                  width: 220,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 10,
+                  maxWidth: 290
+                }]}
             >
-              <Icon name='cart-outline' size={30} color={"white"}/>
-              <Text style={[StyleProductDetail.title, { color: '#ffffff' }]}>Add to cart</Text>
-            </TouchableOpacity>      
+              <Icon name='cart-outline' size={30} color={"white"} />
+              <Text style={[StyleProductDetail.title, { color: '#ffffff' }]}>{t("Add to cart")}</Text>
+            </TouchableOpacity>
           </View>
         </Wrapper>
       </View>
     </View>
   );
 };
-export const dataImage = [
-  {
-    _id: 0,
-    image: 'https://w0.peakpx.com/wallpaper/975/501/HD-wallpaper-galaxy-pink-purple-thumbnail.jpg'
-  },
-  {
-    _id: 1,
-
-    image: 'https://wallpapers.com/images/hd/best-samsung-galaxy-g1peamh755qcrglx.jpg'
-  }, {
-    _id: 2,
-
-    image: 'https://w.forfun.com/fetch/95/95ca17243a31b21dad06e6ef6c35e6e6.jpeg'
-  }
-]
-
-export const dataColor = [
-  {
-    _id: 0,
-    color: '#0b0269'
-  },
-  {
-    _id: 1,
-
-    color: '#25139a'
-  }, {
-    _id: 2,
-
-    color: '#b8a916'
-  }, {
-    _id: 3,
-
-    color: ''
-  }, {
-    _id: 4,
-
-    color: '#ffffff'
-  }, {
-    _id: 5,
-
-    color: '#ffe700'
-  }, {
-    _id: 6,
-
-    color: '#ed7d31'
-  }, {
-    _id: 7,
-
-    color: '#685073'
-  }
-]
-export const dataSize = [
-  {
-    _id: 0,
-    size: 'S'
-  },
-  {
-    _id: 1,
-    size: 'M'
-  }, {
-    _id: 2,
-    size: 'L'
-  }, {
-    _id: 3,
-    size: 'XL'
-  }, {
-    _id: 4,
-    size: 'XXL'
-  }
-]
-
 
 export default ProductDetail;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {View, TouchableOpacity, Text} from 'react-native';
 
 const Pagination = (props) => {
@@ -7,6 +7,7 @@ const Pagination = (props) => {
     setNewIndex(index); // Gọi hàm callback để truyền dữ liệu lên cha
   };
 
+  
   return (
     <View style={styles.container}>
       {data.map((_, index) => {

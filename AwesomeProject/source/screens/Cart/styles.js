@@ -36,8 +36,9 @@ const styleCart = StyleSheet.create({
     // CartViewItem
     card: {
         flexDirection: 'row',
-        height: 110,
-        paddingBottom:10
+        borderRadius:10,
+        padding:10
+       
     }, para: {
         justifyContent: 'space-around'
     },
@@ -53,6 +54,8 @@ const styleCart = StyleSheet.create({
         paddingHorizontal:10
         ,borderRadius:20,
     },
-   
+    checkbox:{
+        marginRight:'2%',
+    }
 })
 export { styleCart }

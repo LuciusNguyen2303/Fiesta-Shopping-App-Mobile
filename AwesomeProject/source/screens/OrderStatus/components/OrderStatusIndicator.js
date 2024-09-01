@@ -3,54 +3,49 @@ import React from 'react'
 import { MetarialIcon } from '../../../components/icon/Material';
 import { FontAwesomeIcon } from '../../../components/icon/FontAwesome';
 
+
+/* 
+    packing,Processing,Shipping,Delivered,Pending
+*/
 const OrderStatusIndicator = ({ status }) => {
     return (
         <View style={styles.container}>
             {
-                status === 'packing' || status === 'handling' || status === 'shipping' || status === 'delivered' || status === 'accepted'?
-                    <View style={[styles.viewPosition, { width: status === 'accepted' ? 20 : 10, height: status === 'accepted' ? 20 : 10, backgroundColor: 'black' }]}>
+                 status === 'Processing' || status === 'Shipping' || status === 'Delivered' || status === 'Pending'?
+                    <View style={[styles.viewPosition, { width: status === 'Pending' ? 20 : 10, height: status === 'Pending' ? 20 : 10, backgroundColor: 'black' }]}>
                         {
-                            status === 'accepted' ? <MetarialIcon name='beenhere' size={13} color='white' /> : <View />
+                            status === 'Pending' ? <MetarialIcon name='beenhere' size={13} color='white' /> : <View />
                         }
                     </View> :
                     <View style={styles.viewPosition} />
             }
-            <View style={[styles.viewLine, (status === 'handling' || status === 'shipping' || status === 'delivered' || status === 'packing') && { backgroundColor: 'black' }]} />
+          
+            <View style={[styles.viewLine, status === 'Processing' || status === 'Shipping' || status === 'Delivered' ? { backgroundColor: 'black' } : {}]} />
             {
-                status === 'packing' || status === 'handling' || status === 'shipping' || status === 'delivered' ?
-                    <View style={[styles.viewPosition, { width: status === 'packing' ? 20 : 10, height: status === 'packing' ? 20 : 10, backgroundColor: 'black' }]}>
+                status === 'Processing' || status === 'Shipping' || status === 'Delivered' ?
+                    <View style={[styles.viewPosition, { width: status === 'Processing' ? 20 : 10, height: status === 'Processing' ? 20 : 10, backgroundColor: 'black' }]}>
                         {
-                            status === 'packing' ? <MetarialIcon name='redeem' size={13} color='white' /> : <View />
+                            status === 'Processing' ? <MetarialIcon name='clean-hands' size={13} color='white' /> : <View />
                         }
                     </View> :
                     <View style={styles.viewPosition} />
             }
-            <View style={[styles.viewLine, status === 'handling' || status === 'shipping' || status === 'delivered' ? { backgroundColor: 'black' } : {}]} />
+            <View style={[styles.viewLine, status === 'Shipping' || status === 'Delivered' ? { backgroundColor: 'black' } : {}]} />
             {
-                status === 'handling' || status === 'shipping' || status === 'delivered' ?
-                    <View style={[styles.viewPosition, { width: status === 'handling' ? 20 : 10, height: status === 'handling' ? 20 : 10, backgroundColor: 'black' }]}>
+                status === 'Shipping' || status === 'Delivered' ?
+                    <View style={[styles.viewPosition, { width: status === 'Shipping' ? 20 : 10, height: status === 'Shipping' ? 20 : 10, backgroundColor: 'black' }]}>
                         {
-                            status === 'handling' ? <MetarialIcon name='clean-hands' size={13} color='white' /> : <View />
+                            status === 'Shipping' ? <MetarialIcon name='flight' size={13} color='white' /> : <View />
                         }
                     </View> :
                     <View style={styles.viewPosition} />
             }
-            <View style={[styles.viewLine, status === 'shipping' || status === 'delivered' ? { backgroundColor: 'black' } : {}]} />
+            <View style={[styles.viewLine, status === 'Delivered' ? { backgroundColor: 'black' } : {}]} />
             {
-                status === 'shipping' || status === 'delivered' ?
-                    <View style={[styles.viewPosition, { width: status === 'shipping' ? 20 : 10, height: status === 'shipping' ? 20 : 10, backgroundColor: 'black' }]}>
+                status === 'Delivered' ?
+                    <View style={[styles.viewPosition, { width: status === 'Delivered' ? 20 : 10, height: status === 'Delivered' ? 20 : 10, backgroundColor: 'black' }]}>
                         {
-                            status === 'shipping' ? <MetarialIcon name='flight' size={13} color='white' /> : <View />
-                        }
-                    </View> :
-                    <View style={styles.viewPosition} />
-            }
-            <View style={[styles.viewLine, status === 'delivered' ? { backgroundColor: 'black' } : {}]} />
-            {
-                status === 'delivered' ?
-                    <View style={[styles.viewPosition, { width: status === 'delivered' ? 20 : 10, height: status === 'delivered' ? 20 : 10, backgroundColor: 'black' }]}>
-                        {
-                            status === 'delivered' ? <FontAwesomeIcon name='money' size={13} color='white' /> : <View />
+                            status === 'Delivered' ? <FontAwesomeIcon name='money' size={13} color='white' /> : <View />
                         }
                     </View> :
                     <View style={styles.viewPosition} />
@@ -60,6 +55,7 @@ const OrderStatusIndicator = ({ status }) => {
 }
 const styles = StyleSheet.create({
     container: {
+        width:'100%',
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: 30,
@@ -74,7 +70,7 @@ const styles = StyleSheet.create({
     },
     viewLine: {
         backgroundColor: '#f0f0f0',
-        width: 61,
+        width: '27%',
         height: 3,
         marginLeft: 2, marginRight: 2,
     }

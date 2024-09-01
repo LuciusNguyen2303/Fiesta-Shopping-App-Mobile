@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { TextInput, StyleSheet, Text, View, TouchableOpacity, Modal } from "react-native";
 import { commonStyles } from "../../css/styles/CommonStyles";
 import { POPPINS_FONT } from "../../css/theme/Theme";
@@ -7,35 +7,41 @@ import { FoundationIcon } from "../icon/Foundation";
 import { MetarialIcon } from "../icon/Material";
 import { FontAwesomeIcon } from "../icon/FontAwesome";
 import cutStringIntoEqualParts from "../CreditCard/AccountNumArgo";
+import { color } from "../../config/ThemeAction";
+import { AppContext } from "../../util/AppContext";
 export const MySection = ({ label }) => {
-    return <Text style={styles.section}>{label}</Text>
+    const { theme } = useContext(AppContext)
+    return <Text style={[styles.section, { color: theme.secondary }]}>{label}</Text>
 }
 
-export const MyTextInput = ({ placeholder, length, onChangeText }) => {
+export const MyTextInput = ({ placeholder, length, onChangeText, style, icon, color }) => {
+    const { theme } = useContext(AppContext)
+    
     return (
         <View style={styles.container}>
             <TextInput
-                style={styles.textInput}
+                style={[styles.textInput, style, { color: 'black' }]}
                 textAlignVertical="bottom"
                 placeholder={placeholder}
                 maxLength={length}
                 onChangeText={onChangeText}
+
             />
             <View style={styles.icon}>
-                <MetarialIcon name='done' size={20} color='black' />
+                <MetarialIcon name={icon ?? 'done'} size={20} color={color ?? 'black'} />
             </View>
         </View>
     )
 }
 
-export const MyTextInputPassword = ({placeholder, length, onChangeText }) => {
+export const MyTextInputPassword = ({ placeholder, length, onChangeText, style }) => {
     const [isVisible, setisVisible] = useState(true)
     const handlerIcon1 = () => {
         setisVisible(!isVisible)
     }
     return (
         <View style={styles.container}>
-            <TextInput style={styles.textInput}
+            <TextInput style={[styles.textInput, { color: 'black' }]}
                 textAlignVertical="bottom"
                 secureTextEntry={isVisible}
                 placeholder={placeholder}
@@ -49,16 +55,16 @@ export const MyTextInputPassword = ({placeholder, length, onChangeText }) => {
     )
 }
 
-export const SocialSignInButton = ({ label, iconName, iconColor, backgroundColor, labelColor, iconSize, borderColor,onPress }) => {
+export const SocialSignInButton = ({ label, iconName, iconColor, backgroundColor, labelColor, iconSize, borderColor, onPress }) => {
     return (
         <TouchableOpacity
-        onPress={onPress}
-        style={[
+            onPress={onPress}
+            style={[
 
-            styles.btnSocialContainer,
-            { backgroundColor: backgroundColor, borderWidth: 1, borderColor: borderColor }]}>
+                styles.btnSocialContainer,
+                { backgroundColor: backgroundColor, borderWidth: 1, borderColor: borderColor }]}>
             <FontAwesomeIcon name={iconName} size={iconSize} color={iconColor} />
-            <Text style={[commonStyles.textBtnAccess_light, { color: labelColor }]}>
+            <Text style={[{ marginStart: 20, fontSize: 16, fontWeight: 'bold', color: labelColor }]}>
                 {label}
             </Text>
         </TouchableOpacity>
@@ -79,20 +85,26 @@ export const LineWithTextBetween = () => {
     )
 }
 
-export const CheckBox = ({ checked }) => {
+export const CheckBox = ({ checked, styleCheckBox, onChange, isDisable }) => {
+
+
     return (
-        <View
-            style={{ borderWidth: 1, width: 15, height: 15, opacity: checked === true ? 1 : 0.5 }}>
+        <TouchableOpacity
+            disabled={isDisable?isDisable:false}
+            activeOpacity={0.2}
+            onPress={() => onChange(!checked)}
+            style={[{ backgroundColor: 'white', borderWidth: 1, borderRadius: 3, width: 17, height: 17, opacity: checked === true ? 1 : 0.5 }, styleCheckBox]}
+        >
             {
-                checked === true ? <View style={{ backgroundColor: '#3669c9', width: 15, height: 15 }}>
-                    <MetarialIcon name='done' size={13} color='white' />
+                checked === true ? <View style={{ backgroundColor: '#000000', width: 15, height: 15 }}>
+                    <MetarialIcon name='done' size={14} color='white' />
                 </View> : <View />
             }
-        </View>
+        </TouchableOpacity>
     )
 }
 
-export const SuccesfulSignUpDialog = ({ isVisible, onClose }) => {
+export const SuccessfulSignUpDialog = ({ isVisible, onClose }) => {
     return (
         <Modal
             animationType="slide"
@@ -124,9 +136,10 @@ export const SuccesfulSignUpDialog = ({ isVisible, onClose }) => {
         </Modal>
     )
 }
+
 const styles = StyleSheet.create({
     section: {
-        color: 'black',
+
         fontFamily: POPPINS_FONT.bold,
         fontSize: 15
     },
@@ -134,7 +147,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderBottomWidth: 0.2,
         height: 30,
-        borderColor: '#d1d1d1',
         marginTop: -8,
         width: '100%',
         fontSize: 17,
@@ -149,6 +161,7 @@ const styles = StyleSheet.create({
         right: 0
     },
     btnSocialContainer: {
+        padding: 8,
         flexDirection: 'row',
         alignItems: 'center',
         width: 350,

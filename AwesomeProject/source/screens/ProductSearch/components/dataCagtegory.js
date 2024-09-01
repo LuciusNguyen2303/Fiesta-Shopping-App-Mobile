@@ -42,17 +42,14 @@ export const data = [
 ]
 export const dataDaily = [
     {
-        "id": 1,
-        "name": "Today"
+        'name':'Ascending',
+        "sortOrder": 'asc',
     },
     {
-        "id": 2,
-        "name": "This Week"
-    },
-    {
-        "id": 3,
-        "name": "Top Sellers"
+        "name": "Descending",
+        "sortOrder":'desc'
     }
+
 ]
 export const dataRating = [
     {

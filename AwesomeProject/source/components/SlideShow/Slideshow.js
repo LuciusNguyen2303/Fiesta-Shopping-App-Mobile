@@ -1,11 +1,11 @@
 import { StyleSheet, View, FlatList } from 'react-native';
 import React, { useRef, useState, useEffect } from 'react';
-import { images } from './images';
 import Pagination from './pagination';
 import SlideItems from './SlideItems';
-const Slideshow = props => {
-  // Props
+
+const Slideshow = (props) => {
   const {
+    onItemClick,
     imagesource,
     isAutoSroll,
     width,
@@ -14,11 +14,10 @@ const Slideshow = props => {
     widthRate,
     paginationEnabled,
     styleItem,
-    styleViewWelcome
+    styleViewWelcome,
   } = props;
-  // Vị trí trong flatlist
+
   const [index, setIndex] = useState(0);
-  // useState
   const [imageSource, setImageSource] = useState([]);
   const [autoScroll, setAutoScroll] = useState(false);
   const [widthR, setWidthR] = useState('80%');
@@ -27,105 +26,50 @@ const Slideshow = props => {
   const [wRate, setwRate] = useState(1);
   const [enablePagination, setEnablePagination] = useState(false);
 
-  // Custom setting slideshow
   useEffect(() => {
     const customSlideshow = () => {
-      if (typeof imagesource !== 'undefined') {
-        setImageSource(imagesource);
-      } else {
-        setImageSource(imagesource);
-      }
-
-      if (typeof isAutoSroll !== 'undefined') {
-        setAutoScroll(isAutoSroll);
-      } else {
-        setAutoScroll(false);
-      }
-
-      if (typeof width !== 'undefined') {
-        setWidthR(width);
-      } else {
-        setWidthR('80%');
-      }
-
-      if (typeof flex !== 'undefined') {
-        setflexH(flex);
-      } else {
-        setflexH(0.8);
-      }
-
-      if (typeof heightRate !== 'undefined') {
-        sethRate(heightRate);
-      } else {
-        sethRate(0.4);
-      }
-
-      if (typeof widthRate !== 'undefined') {
-        setwRate(widthRate);
-      } else {
-        setwRate(1);
-      }
-
-      if (typeof paginationEnabled !== 'undefined') {
-        setEnablePagination(paginationEnabled);
-      } else {
-        setEnablePagination(false);
-      }
+      setImageSource(imagesource || []);
+      setAutoScroll(isAutoSroll || false);
+      setWidthR(width || '80%');
+      setflexH(flex || 0.8);
+      sethRate(heightRate || 0.4);
+      setwRate(widthRate || 1);
+      setEnablePagination(paginationEnabled || false);
     };
-
+    console.log(imageSource.length);
     customSlideshow();
-    // return () => {
-
-    // }
-  }, [
-    imagesource,
-    isAutoSroll,
-    width,
-    flex,
-    heightRate,
-    widthRate,
-    paginationEnabled,
-  ]);
-
-  // slide by time
-  const [running, setrunning] = useState(false);
-
-  useEffect(() => {
-    if (autoScroll) {
-      const timeoutId = setTimeout(() => {
-        if (index < imageSource.length - 1) {
-          setIndex(prevIndex => prevIndex + 1);
-          flatListRef.current.scrollToIndex({ animated: true, index: index + 1 });
-        } else {
-          setIndex(0);
-          flatListRef.current.scrollToIndex({ animated: true, index: 0 });
-        }
-        setrunning(!running);
-      }, 3000); // Thời gian đặt trong milliseconds (ở đây là 3 giây)
-
-      return () => {
-        clearTimeout(timeoutId);
-      };
-    }
-  }, [running, autoScroll]);
-
-  // Lấy vị trí hiện tại của phần tử trong flatlist
-  const handleOnViewableItemsChanged = useRef(({ viewableItems }) => {
-    setIndex(viewableItems[0].index);
-  }).current;
+  }, [imagesource, isAutoSroll, width, flex, heightRate, widthRate, paginationEnabled]);
 
   const flatListRef = useRef(null);
-  // Hàm ref cuộn flatlist tới vị trí được chọn từ pagination
-  const scrollToIndex = index => {
-    // Sử dụng flatListRef để cuộn đến mục ở vị trí cụ thể
-    flatListRef.current.scrollToIndex({ index, animated: true });
+  const indexRef = useRef(index);
+
+  useEffect(() => {
+    indexRef.current = index;
+  }, [index]);
+
+ 
+  const handleOnViewableItemsChanged = useRef(({ viewableItems }) => {
+    if (viewableItems.length > 0 && viewableItems[0].index !== null) {
+      setIndex(viewableItems[0].index);
+    }
+  }).current;
+
+ 
+
+  const scrollToIndex = (index) => {
+    
+    flatListRef.current.scrollToIndex({
+      index,
+      animated: true,
+      viewPosition: 0.5,
+    });
+    setIndex(index);
   };
 
-  // Slideshow view
   return (
-    <View style={styleViewWelcome ? styleViewWelcome: {}}>
+    <View style={styleViewWelcome || {}}>
       <FlatList
-        keyExtractor={(item) => item._id} 
+        keyExtractor={(item) => item.id}
         nestedScrollEnabled={true}
         ref={flatListRef}
         data={imageSource}
@@ -134,8 +78,10 @@ const Slideshow = props => {
         pagingEnabled
         snapToAlignment="center"
         showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => (
+        renderItem={({ item,index }) => (
           <SlideItems
+            index={index}
+            onClick={onItemClick}
             styleItem={styleItem}
             item={item}
             widthR={widthR}
@@ -148,7 +94,6 @@ const Slideshow = props => {
       <Pagination
         data={imageSource}
         indexP={index}
-        // Hàm setnewIndex đã được gắn trước
         setNewIndex={scrollToIndex}
         enablePagination={enablePagination}
       />

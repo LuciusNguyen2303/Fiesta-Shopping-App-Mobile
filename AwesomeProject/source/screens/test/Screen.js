@@ -1,49 +1,38 @@
-import { View, Text, TouchableOpacity } from 'react-native'
-import React, { useState, useEffect } from 'react'
-import DatePicker from 'react-native-date-picker'
-import { SocialSignInButton } from '../../components/textinput/AccessComponents'
-import { formatTime } from '../../components/DatePicker/time'
+import { View, Text, TouchableOpacity, Switch } from 'react-native'
+import React, { useState, useEffect, useContext } from 'react'
+import { FlashList } from "@shopify/flash-list";
+import { color, getMode, setMode } from '../../config/ThemeAction';
+import { ThemeContext } from '../../util/ThemeProvider';
+import { AppContext } from '../../util/AppContext';
+import ProductList1 from '../../components/ProductList/ProductList1';
+import SearchScreen from '../ProductSearch/SearchModal';
+import AxiosInstance from '../../util/AxiosInstance';
 
-const Screen = () => {
-    const [date, setDate] = useState(new Date())
-    const [open, setOpen] = useState(false)
-    const [formattedDate, setFormattedDate] = useState({})
-    useEffect(() => {
-        const formattedTime = formatTime(date)
-        setFormattedDate({
-            day: formattedTime.day,
-            month: formattedTime.month,
-            year: formattedTime.year,
-            formattedVNITime: formattedTime.formattedVNITime
-        })
-        return () => {
-        }
-    }, [date])
+const TestScreen = () => {
+  const {theme} = useContext(AppContext)
+  // const [darkMode,setDarkMode] = useState(false)
 
-    return (
-        <View>
-            <TouchableOpacity onPress={() => setOpen(!open)}>
-                <SocialSignInButton iconName={'facebook'} iconColor={'#080707'} />
-            </TouchableOpacity>
-            <View>
-                {formattedDate ? <Text>
-                    {formattedDate.formattedVNITime}
-                </Text> : <Text />}
-            </View>
-            <DatePicker
-                modal
-                open={open}
-                date={date}
-                onConfirm={(date) => {
-                    setOpen(false)
-                    setDate(date)
-                }}
-                onCancel={() => {
-                    setOpen(false)
-                }}
-            />
-        </View>
-    )
+  const onTestToken = async ()=>{
+    try {
+        const response = await AxiosInstance.post("userApi/testAuthen")
+        if(response.result)
+          console.log(response.message);
+        
+    } catch (error) {
+      console.log("onTestToken: ",error);
+      
+    }
+  }
+  return (
+ <View>
+  <TouchableOpacity
+  onPress={()=>onTestToken()}
+  >
+    <Text>Tesstttt</Text>
+  </TouchableOpacity>
+ </View>
+
+  );
 }
 
-export default Screen
+export default TestScreen

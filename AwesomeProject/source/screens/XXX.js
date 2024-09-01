@@ -1,19 +1,87 @@
-import { View, Text,TouchableOpacity } from 'react-native'
-import React from 'react'
-import BIDVCard from '../components/CreditCard/BIDV/BIDVCard'
-import GodiBankCard from '../components/CreditCard/GodiBank/GodiBankCard'
-import NBBankCard from '../components/CreditCard/NBBank/NBBankCard'
-import TechniBankCard from '../components/CreditCard/TechniBank/TechniBankCard'
-import TPBankCard from '../components/CreditCard/TPBank/TPBankCard'
-import VietTanBankCard from '../components/CreditCard/VietTanBank/VietTanBankCard'
-import VietzBankCard from '../components/CreditCard/VietzBank/VietzBankCard'
-import CreditCard from '../components/CreditCard/CreditCard'  
-const XXX = () => {
+import React from "react";
+
+import { StyleSheet, View, Text, Image } from "react-native";
+import MultiSlider from "@ptomasroos/react-native-multi-slider";
+
+export default function Multi() {
+  const [multiSliderValue, setMultiSliderValue] = React.useState([0, 100]);
+
+  nonCollidingMultiSliderValuesChange = (values) => setMultiSliderValue(values);
+
   return (
-   <View style={{overflow:'hidden'}}>
-     <CreditCard styleCreditCard={{margin:20}}  name={"Nguyen Quang Tuan"} accountNum={"89546562359874"} expiredDate={"18/23"} cardName={'VietzBank'} front={false} CVV={"236"}/>
-   </View>
-  )
+    <View style={styles.container}>
+      <Text style={styles.title}>Sliders</Text>
+
+      <View style={styles.sliderOne}>
+        <Text style={styles.text}>
+          Two Markers with minimum overlap distance:
+        </Text>
+      </View>
+      <MultiSlider
+        values={[multiSliderValue[0], multiSliderValue[1]]}
+        sliderLength={280}
+        onValuesChange={nonCollidingMultiSliderValuesChange}
+        min={0}
+        max={100}
+        step={1}
+        allowOverlap={false}
+        snapped
+        
+        minMarkerOverlapDistance={10}
+        customMarkerLeft={(e) => {
+          return <CustomMarker currentValue={e.currentValue} />;
+        }}
+        customMarkerRight={(e) => {
+          return <CustomMarker currentValue={e.currentValue} />;
+        }}
+        isMarkersSeparated={true}
+      />
+    </View>
+  );
 }
 
-export default XXX
+const CustomMarker = ({ currentValue }) => {
+  return (
+
+      <View
+        style={{
+        
+          width: 15,
+          height: 15,
+          borderRadius: 10,
+          backgroundColor: "black",
+        }}
+      >
+
+      </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  sliders: {
+    margin: 20,
+    width: 280,
+  },
+  text: {
+    alignSelf: "center",
+    paddingVertical: 20,
+  },
+  title: {
+    fontSize: 30,
+  },
+  sliderOne: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 50,
+  },
+  image: {
+    height: 40,
+    width: 40,
+  },
+});

@@ -10,6 +10,7 @@ import { MetarialIcon } from '../../../components/icon/Material';
 import styleModalLanguage from './style';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FontAwesomeIcon } from '../../../components/icon/FontAwesome';
+import CountryFlag from 'react-native-country-flag';
 const Language = ({ navigation, open, setOpened }) => {
 
   const { t } = useTranslation();
@@ -57,7 +58,8 @@ const Language = ({ navigation, open, setOpened }) => {
                 <TouchableOpacity key={item} onPress={() => changeLanguage(item)}>
                   <View style={styleModalLanguage.cardLanguage}>
                     <View style={styleModalLanguage.insideCard}>
-                      <Icon name={LanguageList[item].name} height="50" width="50" />
+                      <CountryFlag style={{borderRadius:10,marginRight:5}} size={50} isoCode={LanguageList[item].isoCode}/>
+                      {/* <Icon name= height="50" width="50" /> */}
                       <Text style={[commonStyles.normalText, { marginLeft: 10, fontWeight: 'bold', fontSize: 18 }]}  >{LanguageList[item].nativeName}</Text>
                     </View>
                     {(defaultLanguage === item) ?

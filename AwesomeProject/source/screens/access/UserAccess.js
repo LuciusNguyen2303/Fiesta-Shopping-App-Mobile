@@ -1,31 +1,60 @@
-import { View, Text, ImageBackground, StatusBar, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text, ImageBackground, StatusBar, TextInput, TouchableOpacity, BackHandler } from 'react-native'
 import React, { useContext } from 'react'
 import { commonStyles } from '../../css/styles/CommonStyles'
 import { AppStyles } from '../../css/styles/CommonStyles'
 import { AppContext } from '../../util/AppContext'
+import Button from '../../components/Button/Button'
+import { useFocusEffect } from '@react-navigation/native'
+import { useTranslation } from 'react-i18next'
 const backGround = { uri: 'http://images.unsplash.com/photo-1606164510427-0dff1bcb27d2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8YmxhY2slMjBhbmQlMjB3aGl0ZXxlbnwwfHwwfHx8MA%3D%3D' }
 const UserAccess = (props) => {
-    const {navigation} = props;
+    const {t} = useTranslation("")
+    const { navigation } = props;
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                BackHandler.exitApp();
+                return true; // Ngăn không cho back lại
+            };
+            
+            BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+            return () => {
+                BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+            };
+        }, [])
+    );
     return (
-        <ImageBackground style={[{ height: '100%'}, commonStyles.container]} source={backGround}>
+        <ImageBackground style={[{ height: '100%' }, commonStyles.container]} source={backGround}>
             <StatusBar backgroundColor='#000000' />
             <View style={AppStyles.styleUserAccess.view}>
-                <Text style={commonStyles.title}>FashionFiesta</Text>
-                <Text numberOfLines={2} style={[commonStyles.normalText, {color:'white'}]}>
-                "Style is a way to say who you are without having to speak, about timeless elegance and individuality."
+                <Text style={commonStyles.title}>Fashion Fiesta</Text>
+                <Text numberOfLines={3} style={[commonStyles.normalText, { color: 'white' }]}>
+                    "{t("lorem isum")}"
                 </Text>
             </View>
-            <View style={[commonStyles.viewBtnAccess, {marginTop:300}]}>
-                <TouchableOpacity
+            <View style={[commonStyles.viewBtnAccess, { marginTop: 300 }]}>
+                {/* <TouchableOpacity
                 onPress={() => navigation.navigate('Login')} 
                 style={commonStyles.btnAccess_light}>
                     <Text style={commonStyles.textBtnAccess_light}>Login</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                onPress={() => navigation.navigate('SignUp')} 
-                style={[commonStyles.btnAccess_dark, {borderColor:'white', borderWidth:1,backgroundColor:'#02020200'}]}>
-                    <Text style={[commonStyles.textBtnAccess_dark]}>Sign up</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
+                <Button
+                    onPress={() => navigation.navigate('Login')}
+
+                    title={t("Sign in")}
+                    styleButton={{ backgroundColor: 'black', borderColor: 'transparent' }}
+                    styleText={{ color: 'white' }}
+                />
+                <Button
+                    onPress={() => navigation.navigate('SignUp')}
+
+                    title={t("Sign up")}
+                    styleButton={{ backgroundColor: 'white' }}
+                    styleText={{ color: 'black' }}
+                />
+
+             
             </View>
         </ImageBackground>
     )

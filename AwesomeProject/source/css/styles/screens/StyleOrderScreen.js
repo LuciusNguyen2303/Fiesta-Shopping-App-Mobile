@@ -8,15 +8,15 @@ export const StyleOrderScreen = StyleSheet.create({
         marginTop: 30
     },
     cardViewShadow: {
-        padding: 15, 
+        padding: 20, 
         marginTop: 30, 
         borderRadius: 10, 
         backgroundColor: 'white',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowColor: '#020202',
+        shadowOffset: { width: 2, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
-        elevation: 15
+        elevation: 8
     },
     textLocation: {
         fontFamily: POPPINS_FONT.bold,

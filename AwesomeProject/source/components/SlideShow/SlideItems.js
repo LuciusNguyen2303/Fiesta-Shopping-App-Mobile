@@ -1,31 +1,33 @@
-import { Dimensions, StyleSheet,SafeAreaView,StatusBar,ImageBackground, View, Text, Image } from 'react-native';
+import { TouchableOpacity, Dimensions, StyleSheet, SafeAreaView, StatusBar, ImageBackground, View, Text } from 'react-native';
 import React from 'react';
 import StyleSlideShow from './Styles';
 const { width, height } = Dimensions.get('screen');
-const SlideItems = props => {
-  const { item, widthR, flexH, heightRate, widthRate, styleItem,Children } = props;
-  return (
-    <SafeAreaView style={{ flex: 1,height: height * heightRate, width: width * widthRate ,
-  }}>
-    <StatusBar translucent backgroundColor='transparent' />
-   
-    <ImageBackground
-        
-        source={{uri:item.image}}
-        style={[styleItem ? styleItem : StyleSlideShow.backgroundImage, { width: widthR, flex: flexH }]}      >
-        {/* Nội dung bên trong ImageBackground */}
-    </ImageBackground>
 
+const SlideItems = (props) => {
+  const { index, onClick, item, widthR, flexH, heightRate, widthRate, styleItem, children } = props;
+
+  return (
+    <SafeAreaView style={{
+      flex: 1,
+      height: height * heightRate,
+      width: width * widthRate,
+    }}>
+      <StatusBar translucent backgroundColor='transparent' />
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={() => { onClick(index); console.log("Item clicked",index); }}
+        style={{ width: '100%', height: '100%' }} // Đặt kích thước cho TouchableOpacity
+      >
+        <ImageBackground
+          source={{ uri: item.url }}
+          style={[styleItem ? styleItem : StyleSlideShow.backgroundImage, { width: widthR, flex: flexH }]}
+        >
+          {/* Nội dung bên trong ImageBackground */}
+          {children}
+        </ImageBackground>
+      </TouchableOpacity>
     </SafeAreaView>
-  
   );
 };
+
 export default SlideItems;
-// const styles = StyleSheet.create({
-//   container: {
-//     alignItems: 'center',
-//   },
-//   image: {
-//     resizeMode: 'contain',
-//   },
-// });

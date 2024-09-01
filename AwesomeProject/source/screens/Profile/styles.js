@@ -48,9 +48,10 @@ const StyleProfile=StyleSheet.create({
         marginVertical:8
     },
     miniItem:{
+        width:'93%',
         flexDirection:'row',
         alignItems:'center',
-        justifyContent:'space-evenly'
+        justifyContent:'flex-start'
     },
     iconWrapper:{
        backgroundColor:'#cccccc',

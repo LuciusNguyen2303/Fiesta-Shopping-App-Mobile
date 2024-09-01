@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity, TextInput, Dimensions, SafeAreaView, KeyboardAvoidingView, ToastAndroid } from 'react-native'
-import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Dimensions, SafeAreaView, KeyboardAvoidingView, ToastAndroid, Alert } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
@@ -8,78 +8,61 @@ import { styleCoProdScreen } from '../../CategoryofProductScreen/Styles'
 import { commonStyles } from '../../../css/styles/CommonStyles';
 import CreditCard from '../../../components/CreditCard/CreditCard';
 import { cardHeight, titleCardHeight, cardPadding } from './MyCards';
-
-import { MySection } from '../../../components/textinput/AccessComponents';
+import Dialog from '../../../components/Dialog/Dialog';
+import dialogStyle from '../../../components/Dialog/style';
+import { CheckBox, MySection } from '../../../components/textinput/AccessComponents';
 import { FontAwesomeIcon } from '../../../components/icon/FontAwesome';
 import cutStringIntoEqualParts from '../../../components/CreditCard/AccountNumArgo';
 import { Dropdown } from 'react-native-element-dropdown';
 import { cardLists } from '../../../components/CreditCard/CardLists';
 import { styleEditCards } from './styles';
 import { cardNameList } from '../../../components/CreditCard/CardBrandList';
+import regex from '../../../config/Regex';
+import { CardField, CardFieldInput, CardForm, useStripe } from '@stripe/stripe-react-native';
+import { STRIPE_SECRET_KEY } from '@env'
+import AxiosInstance from '../../../util/AxiosInstance';
+import Wrapper from '../../../components/Wrapper';
+import Button from '../../../components/Button/Button';
+import { AppContext } from '../../../util/AppContext';
+import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { dataUserSelector } from '../../../redux-store';
+import { useTranslation } from 'react-i18next';
+
 const EditCard = () => {
+    const userData = useSelector(dataUserSelector)
+    const [name, setName] = useState("")
+const [isName, setIsName] = useState(true)
+const [isDefault,setIsDefault] = useState(false)
 
-
+const {theme} = useContext(AppContext)
+    const [IsFirstTime, setIsFirstTime] = useState(true)
     // Dialog
-    const [isClosed, setIsClosed] = useState(true);
+    const navigation = useNavigation()
+    const [isClosed, setIsClosed] = useState(false);
     function dialogFunction() {
         setIsClosed(!isClosed)
     }
-
     //card info var
 
     // types of card 
     const [value, setValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
+    const stripe = useStripe();
 
-    // expired date
-    const [date, setDate] = useState(new Date())
-    const [dateString, setDateString] = useState("")
-    const [isDate, setIsDate] = useState(true)
-
-    const [open, setOpen] = useState(false)
-
-    //name
-    const [name, setName] = useState("")
-    const [isName, setIsName] = useState(true)
-
-    // account num
-    const [accountNum, setAccountNum] = useState("")
-    const [isAccountNum, setIsAccountNum] = useState(true)
-
-    //CVV
-    const [CVV, setCVV] = useState("")
-    const [isCVV, setIsCVV] = useState(true)
-
+    const [cardDetail,setCardDetail] = useState(null)
     // // check card's info 
     // Flip card 
     // variables 
-    const handleNumberChange = (text) => {
-        // Loại bỏ các ký tự không phải là số từ chuỗi text
-        const formattedText = text.replace(/[^0-9]/g, '');
-        return formattedText;
-    };
+    const fetchCardDetail = (cardDetail) => {
+        console.log("Card details:", cardDetail);
+        if (cardDetail.complete) {
+          setCardDetail(cardDetail);
+        } else {
+          setCardDetail(null);
+        }
+      };
     const rotate = useSharedValue(0);
-    const frontAnimatedStyles = useAnimatedStyle(() => {
-        const rotateValue = interpolate(rotate.value, [0, 1], [0, 180])
-        return {
-            transform: [
-                {
-                    rotateY: withTiming(`${rotateValue}deg`, { duration: 1000 })
-                }
-            ]
-        }
-    })
-    const backAnimatedStyles = useAnimatedStyle(() => {
-        const rotateValue = interpolate(rotate.value, [0, 1], [180, 360])
-        return {
-            transform: [
-                {
-                    rotateY: withTiming(`${rotateValue}deg`, { duration: 1000 })
-                }
-            ]
-        }
-    })
-    // Prevent user paste
     const handlePaste = () => {
         // Ngăn chặn hành động paste
         return false;
@@ -87,147 +70,71 @@ const EditCard = () => {
     // check each element by regex
 
 
+    const handleSubmitCard = async () => {
+        try {
+            if(!name||!cardDetail?.complete)
+            {
+                Alert.alert('Error',"Something wrong in your infomation.")
+                return
+            }
+            const { error,token } = await stripe.createToken({...cardDetail,name:name,type:'Card'});
 
+            if (error) {
+                console.error('Error creating token:', error);
+            } else {
+                console.log('Token created:', token);
+                // Xử lý token (ví dụ: gửi đến server)
+                const response = await AxiosInstance.post(`payment/save-card?userId=${userData._id}&token=${token.id}&isDefault=${isDefault}`)
+                if(response.statusCode =200) 
+                    ToastAndroid.show("INSERT NEW CARD SUCCESFULLY!!",ToastAndroid.SHORT)
+            }   
+        } catch (error) {
+            console.error('Unexpected error:', error);
+        }
+    };
     // check empty card element
-    const cardValidate = () => {
-        if (dateString && name && CVV && accountNum) {
-            console.log("Đúng thông tin...", "Điền code ở đấyyyyy.");
-            return
-        }
-        if (!dateString)
-            setIsDate(false)
-
-        if (!name)
-            setIsName(false)
-
-        if (!CVV)
-            setIsCVV(false)
-
-        if (!accountNum)
-            setIsAccountNum(false);
-        if (!value)
-            setIsAccountNum(false);
-        ToastAndroid.show("You must fill in your card's information!!!", ToastAndroid.SHORT)
-        return;
-
-    }
-
-
     const checkElementinCards = () => {
-        if (name.length > 0 && !isName) {
+        if (name.length > 4 && regex.fullnameWithRegex.test(name)) {
             setIsName(true)
-
-        }
-        if (CVV.length > 0 && !isCVV) {
-            setIsCVV(true)
-        }
-        if (dateString.length > 0 && !isDate) {
-            setIsDate(true)
-        }
-        if (accountNum.length > 0 && !isAccountNum) {
-            setIsAccountNum(true);
-        }
+        } else setIsName(false)
+       
+    }
+    const onBack=()=>{
+        if(navigation.canGoBack)
+            navigation.goBack()
     }
     useEffect(() => {
-        checkElementinCards();
-
-
-
+        if (!IsFirstTime)
+            checkElementinCards();
         return () => {
 
         }
-    }, [name, accountNum, CVV, dateString])
+    }, [name, IsFirstTime])
 
+    const {t}=useTranslation()
     return (
 
         <KeyboardAwareScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps={'always'} style={{ flex: 1 }} >
-            <Header></Header>
-            <View>
-
-                <Animated.View
-                    style={[{
-                        transform: [{ scaleX: 0.9, }]
-
-                    },
-
-                    ]}>
-                    <CreditCard
-                        styleCreditCard={{ borderRadius: 10, marginHorizontal: 20, }}
-                        name={""}
-                        accountNum={""}
-                        expiredDate={""}
-                        cardName={'TPBank'}
-                        front={true} CVV={""} />
-
-                </Animated.View>
-                <Animated.View
-                    style={[{ marginTop: -190, backfaceVisibility: 'hidden' }, frontAnimatedStyles]}
-                >
-                    <CreditCard styleCreditCard={{ margin: 20 }} name={name} accountNum={accountNum} expiredDate={dateString} cardName={'VietzBank'} front={true} CVV={CVV} />
-
-                </Animated.View>
-                <Animated.View
-                    style={[{ marginTop: -240, backfaceVisibility: 'hidden' }, backAnimatedStyles]}
-                >
-                    <CreditCard styleCreditCard={{ margin: 20 }} name={name} accountNum={accountNum} expiredDate={dateString} cardName={'VietzBank'} front={false} CVV={CVV} />
-
-                </Animated.View>
-            </View >
-
-            <View style={commonStyles.container}>
-                <Text style={[commonStyles.normalText, { margin: 10, fontSize: 20, color: 'black', fontWeight: 'bold' }]}>
-                    Card Details
-                </Text>
-                <TextInput
-                    keyboardType='decimal-pad'
-                    keyboardAppearance='dark'
-                    placeholder='Account Number'
-                    placeholderTextColor={"#c3c3c3"}
-                    onChangeText={(text) => { setAccountNum(handleNumberChange(text)) }}
-
-                    style={[commonStyles.normalText,
-
-                    {
-                        fontSize: 18,
-                        color: 'black',
-                        textAlignVertical: 'center',
-                        justifyContent: 'center',
-                        borderWidth: 1,
-                        borderColor: !isAccountNum ? 'red' : '#cccccc',
-                        borderRadius: 10,
-                        padding: 15,
-                        margin: 10,
-
-                    }]}
-
-                />
+            <Header onBack={onBack}></Header>
+            <Wrapper style={{backgroundColor:'white'}}>
+            <View style={[commonStyles.container, { paddingBottom: 15,justifyContent:'center',marginTop:20,backgroundColor:'white' }]}>
                 <TextInput
                     keyboardType='default'
                     keyboardAppearance='dark'
-                    placeholder='Account Name'
+                    placeholder={t('Account Name')}
                     placeholderTextColor={"#c3c3c3"}
                     onChangeText={(text) => { setName(text) }}
 
-                    style={[commonStyles.normalText,
-
-                    {
-                        fontSize: 18,
-                        color: 'black',
-                        textAlignVertical: 'center',
-                        justifyContent: 'center',
-                        borderWidth: 1,
-                        borderColor: !isName ? 'red' : '#cccccc',
-                        borderRadius: 10,
-                        padding: 15,
-                        margin: 10,
-
-                    }]}
+                    style={[
+                        commonStyles.normalText,
+                        styleEditCards.inputText
+                        , { borderColor: !isName ? 'red' : '#cccccc', }
+                    ]}
 
                 />
+                {!isName && <Text style={[commonStyles.normalText, styleEditCards.alertText]}>Full name mustn't have the numbers or special character and at least 6 character !!!</Text>}
+
                 <View>
-                    <TouchableOpacity onPress={dialogFunction}>
-                        <Text>safsdfsfsdf</Text>
-                    </TouchableOpacity>
                     <Dialog
                         styleTitle={dialogStyle.title}
                         buttonStyle={dialogStyle.button}
@@ -241,103 +148,48 @@ const EditCard = () => {
                         isClosed={isClosed}
                     />
                 </View>
-                <Dropdown
-                    style={styleEditCards.dropdownStyle}
-                    data={cardNameList}
-                    value={value}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                        console.log(item.value);
-                        setValue(item.value);
-                        setIsFocus(false);
+
+
+       
+                <CardField
+                    cardStyle={{height:30}}
+                    postalCodeEnabled={false}
+                    placeholder={{ number: '4242 4242 4242 4242' }}
+                    onFocus={(focusedField) => {
+                        if (focusedField == "Cvc")
+                            rotate.value = 1
+                        else
+                            rotate.value = 0
                     }}
-                    placeholderStyle={[commonStyles.normalText]}
-                    placeholder="Select your card's brand"
-                    maxHeight={250}
-                    labelField="value"
-                    valueField="value"
+                    onCardChange={fetchCardDetail}
+                    onBlur={()=>rotate.value=0}
+
+                    onChange={fetchCardDetail}
+                    style={styles.cardField}
                 />
                 <View
-
-                    style={[commonStyles.normalText,
-
-                    {
-                        flexDirection: 'row',
-                        fontSize: 18,
-                        color: 'black',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        borderWidth: 1,
-                        borderColor: !isDate ? 'red' : '#cccccc',
-                        borderRadius: 10,
-                        padding: 15,
-                        margin: 10,
-                    }]}
-
+                    style={{marginTop:-5,flexDirection:'row',justifyContent:'space-evenly',alignItems:'center',width:'50%'}}
                 >
-                    <DatePicker
-                        modal
-                        mode='date'
-                        minimumDate={date}
-                        open={open}
-                        date={date}
-                        onConfirm={(date) => {
-                            setOpen(false)
-                            console.log(date);
-                            setDateString(date.getMonth() + 1 + "/" + date.getFullYear())
-                        }}
-                        onCancel={() => {
-                            setOpen(false)
-                        }}
+                    <CheckBox
+                        checked={isDefault}
+                        onChange={setIsDefault}
                     />
-                    <Text
-                        style={{
-                            fontSize: 18,
-                            color: dateString ? 'black' : '#c3c3c3',
-                            fontWeight: 'bold'
-                        }}
-                    >{dateString ? "Exp: " + dateString : "Choose your card's expire date"}</Text>
-                    <TouchableOpacity
-                        onPress={() => setOpen(!open)}>
-                        <FontAwesomeIcon size={25} name={"calendar"} color={"black"} />
-                    </TouchableOpacity>
+                    <Text style={[commonStyles.normalText,{marginTop:5,fontSize:16,textAlignVertical:'center'}]}>Set default card</Text>
                 </View>
-                <TextInput
-                    keyboardType='decimal-pad'
-                    keyboardAppearance='dark'
-                    placeholder='CVV'
-                    placeholderTextColor={"#c3c3c3"}
-                    onChangeText={(text) => { setCVV(text) }}
-                    onTouchStart={() => { rotate.value = 1 }}
-                    onBlur={() => { rotate.value = 0 }}
-                    style={[commonStyles.normalText,
-
-                    {
-                        fontSize: 18,
-                        color: 'black',
-                        textAlignVertical: 'center',
-                        justifyContent: 'center',
-                        borderWidth: 1,
-                        borderColor: !isCVV ? 'red' : '#cccccc',
-                        borderRadius: 10,
-                        padding: 15,
-                        margin: 10,
-                    }]}
-
-                />
-
                 <View style={{ flexDirection: 'row', }}>
-                    <TouchableOpacity style={[commonStyles.btnAccess_dark, { width: '50%' }]}
-                        onPress={() => { cardValidate() }}
+                   
+                    <Button
+                        title={"Done"}
+                        styleButton={{margin:20,backgroundColor:theme.secondary}}
+                        styleText={{color:theme.primary}}
+                        onPress={()=>handleSubmitCard()}
                     >
-                        <Text style={commonStyles.textBtnAccess_dark}>Confirm</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[commonStyles.btnAccess_light, { justifyContent: 'center', marginTop: 20, marginLeft: 5, height: 50, width: '50%', elevation: 2, shadowColor: 'black', shadowOffset: { width: 1, height: 1 } }]}>
-                        <Text style={[commonStyles.textBtnAccess_light]}>Cancel</Text>
-                    </TouchableOpacity>
+
+                    </Button>
+                   
                 </View>
             </View>
+            </Wrapper>
         </KeyboardAwareScrollView>
     )
 }
@@ -351,7 +203,7 @@ export const Header = ({ onBack, onCart }) => {
                     <Icon name="arrow-back-circle" color={"black"} size={50} />
 
                 </TouchableOpacity>
-                <Text style={[commonStyles.normalText, { fontSize: 25, fontWeight: 'bold', color: 'black' }]}>Editing your card</Text>
+                <Text style={[commonStyles.normalText, { fontSize: 25, fontWeight: 'bold', color: 'black' }]}>Insert your new card</Text>
                 <TouchableOpacity style={{ marginRight: 10 }} onPress={() => { console.log("search"); onCart(); }}>
                     <Icon name="cart-outline" color={"black"} size={40} />
 
@@ -360,4 +212,23 @@ export const Header = ({ onBack, onCart }) => {
         </View>
     )
 }
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        padding: 20,
+    },
+    cardFieldContainer: {
+        flexDirection: 'column',
+        marginBottom: 20,
+    },
+    cardField: {
+        height: 60,
+        marginBottom: 20,
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
+});
 export default EditCard

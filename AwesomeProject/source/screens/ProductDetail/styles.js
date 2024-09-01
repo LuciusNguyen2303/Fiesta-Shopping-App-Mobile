@@ -33,6 +33,9 @@ const StyleProductDetail = StyleSheet.create({
     borderRadius: 10,
     borderColor:'#ebebebfe'
   },
+  imageListView:{
+
+  },
   backgroundImage: {
     width: 300,
     height: 300,
@@ -42,8 +45,7 @@ const StyleProductDetail = StyleSheet.create({
   },
   //itemSize 
   itemSizeView:{
-    width:50,
-    height:50,
+    maxWidth:100,
     borderRadius:50,
     justifyContent:'center',
     alignItems:'center',

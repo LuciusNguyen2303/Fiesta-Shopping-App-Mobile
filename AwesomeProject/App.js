@@ -1,13 +1,9 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
 
-import React from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
+  BackHandler,
+  AppState,
+  LogBox,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -17,31 +13,8 @@ import {
   View,
 } from 'react-native';
 import { FONTS } from './source/assets/Constants';
-
-
-
-
-
-
-// POPPINS_BLACK: 'PoppinsBlack',
-//   POPPINS_BLACK_ITALIC: 'PoppinsBlackItalic',
-//     POPPINS_BOLD: 'PoppinsBold',
-//       POPPINS_BOLD_ITALIC: 'PoppinsBoldItalic',
-//         POPPINS_EXTRA_BOLD: 'PoppinsExtraBold',
-//           POPPINS_EXTRA_BOLD_ITALIC: 'PoppinsExtraBoldItalic',
-//             POPPINS_EXTRA_LIGHT: 'PoppinsExtraLight',
-//               POPPINS_EXTRAL_LIGHT_ITALIC: 'PoppinsExtraLightItalic',
-//                 POPPINS_ITALIC: 'PoppinsItalic',
-//                   POPPINS_LIGHT: 'PoppinsLight',
-//                     POPPINS_LIGHT_ITALIC: 'PoppinsLightItalic',
-//                       POPPINS_MEDIUM: 'PoppinsMedium',
-//                         POPPINS_MEDIUM_ITALIC: 'PoppinsMediumItalic',
-//                           POPPINS_REGULAR: 'PoppinsRegular',
-//                             POPPINS_SEMIBOLD: 'PoppinsSemiBold',
-//                               POPPINS_SEMIBOLD_ITALIC: 'PoppinsSemiBoldItalic',
-//                                 POPPINS_THIN: 'PoppinsThin',
-//                                   POPPINS_THIN_ITALIC: 'PoppinsThinItalic',
 import {
+  // AppState,
   Colors,
   DebugInstructions,
   Header,
@@ -54,55 +27,135 @@ import { DARK_MODE } from './source/config/ThemeAction';
 import { POPPINS_FONT } from './source/css/theme/Theme';
 import UserAccess from './source/screens/access/UserAccess';
 import { AppContext, AppContextProvider } from './source/util/AppContext';
-import { NavigationContainer } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, NavigationContainer, ThemeProvider } from '@react-navigation/native';
 import AppNavigator from './source/util/AppNavigator';
 import Login from './source/screens/access/Login';
-import SearchScreen from './source/screens/ProductSearch/SearchScreen';
 import OrderScreen from './source/screens/OrderStatus/OrderScreen';
 
 import SettingScreen from './source/screens/Profile/Settings/SettingScreen';
 
 import Home from './source/screens/Home/Home';
-import DeliveryAddressScreen from './source/screens/Order/DeliveryAddressScreen';
 import { StripeProvider } from '@stripe/stripe-react-native';
+import EditCard from './source/screens/Profile/MyCreditCards/EditCard';
+import TestScreen from './source/screens/test/Screen'
+import { STRIPE_PUBLIC_KEY } from '@env'
+import Multi from './source/screens/XXX';
+import { ThemeContext } from './source/util/ThemeProvider';
+import SignUp from './source/screens/access/SignUp';
+import { Provider } from 'react-redux';
+import { setIsAppKilled, store } from './source/redux-store';
+import MyCards from './source/screens/Profile/MyCreditCards/MyCards';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNetInfo } from '@react-native-community/netinfo';
+import i18next from 'i18next';
+import SplashScreen from 'react-native-splash-screen';
 
 const App = () => {
+  LogBox.ignoreAllLogs();
+  const netInfo= useNetInfo()
+
+// Language 
+const changeLanguage = async (lng) => {
+  i18next.changeLanguage(lng)
+    .then(async () => await AsyncStorage.setItem("default-language", lng))
+    .catch(error => console.log("Error:", error));
+}
+const checkLanguage = async () => {
+  const defaultLanguageFromStorage = await AsyncStorage.getItem("default-language")
+  if (defaultLanguageFromStorage !== null) {
+    changeLanguage(defaultLanguageFromStorage);
+
+  } else {
+    changeLanguage("en");
+  }
+}
+  // Check app active.
+  const appState = useRef(AppState.currentState);
+  const [appStateVisible, setAppStateVisible] = useState(appState.current);
+  useEffect(() => {
+    SplashScreen.hide()
+    const subscription = AppState.addEventListener('change', async (nextAppState) => {
+
+      if (
+        // appState.current.match(/background/) &&
+        nextAppState === 'active'
+      ) {
+        console.log("Connection", netInfo.isConnected );
+
+        checkLanguage()
+        const lastActiveTime = await getLastActiveTime()
+        const currentTime = new Date().getTime();
+        const timeElapsed = currentTime - lastActiveTime;
+
+        if (timeElapsed > 20*60*1000){
+          store.dispatch(setIsAppKilled(true))
+          console.log(timeElapsed.toString(),timeElapsed > 3000);
+
+        }
+        else{
+          console.log(timeElapsed.toString(),timeElapsed > 3000);
+
+          store.dispatch(setIsAppKilled(false))
+
+        }
+
+        console.log('App has come to the foreground!');
+      } else if (nextAppState === 'background') {
+        await saveLastActiveTime()
+        console.log('App has not come to the foreground!');
+        console.log("Connection", netInfo.isConnected );
+
+      }
+
+      appState.current = nextAppState;
+      setAppStateVisible(appState.current);
+    });
+    const getLastActiveTime = async () => {
+      try {
+        const lastTime = await AsyncStorage.getItem("LAST_ACTIVE_TIME");
+        return lastTime ? parseInt(lastTime) : null;
+      } catch (error) {
+        console.error('Lỗi khi lấy thời gian cuối:', error);
+        return null;
+      }
+    };
+    const saveLastActiveTime = async () => {
+      try {
+        const currentTime = new Date().getTime();
+        await AsyncStorage.setItem("LAST_ACTIVE_TIME", currentTime.toString());
+      } catch (error) {
+        console.error('Lỗi khi lưu thời gian:', error);
+      }
+    };
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+
+
+
 
   return (
-    <StripeProvider
-    publishableKey='pk_test_51PV6nVJbQzxhdXgcHCR0K31WwdRTSbmDj0maTMY17gI2poV6dhE4nDpLkX5uaBnx3HIHAR5pFqizb8jTtYXCOBIe002Y6VC1aA'
-    >
+    <Provider store={store}>
+      <AppContextProvider>
+        <NavigationContainer
+        >
+          <StripeProvider
+            publishableKey={STRIPE_PUBLIC_KEY}
+          >
 
-      <DeliveryAddressScreen />
-
-    </StripeProvider>
-    // <AppContextProvider>
-    //   <NavigationContainer>
-    //     <AppNavigator />
-    //   </NavigationContainer>
-    // </AppContextProvider>
+            <AppNavigator />
+          </StripeProvider>
+        </NavigationContainer>
+      </AppContextProvider>
+    </Provider>
 
     // <Login />
   )
+
 }
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+
 
 export default App;
