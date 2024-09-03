@@ -3,7 +3,7 @@ export {
     isAppKilledSelector,
     setIsAppKilled,
     dataUserSelector,resetUser, isLoginSelector, setIsLogin, setUserData, setEmail, setImage, setName, setAddress,
-     addNewAddress, updateAddress, setDefaultAddress, setGender, deleteAddress
+    addNewAddress, updateAddress, setDefaultAddress, setGender, deleteAddress
 } from './Slice/userSlice'
 
 export { filterSelector, onChangeName, onChangePriceRange, onChangeMainCategory, onChangeSubCategory, onChangeSort,onReset } from './Slice/filterSlice'

@@ -30,78 +30,6 @@ const Login = (props) => {
   const [username, setusername] = useState('');
   const [password, setpassword] = useState('');
   const dispatch = useDispatch()
-  // // change darklightmode function
-  // // const toggleMode = () => {
-  // //   setisModeApply((prevMode) => (prevMode === "LIGHT_MODE" ? "DARK_MODE" : "LIGHT_MODE"));
-  // // };
-  // // const theme = LIGHT_DARK_MODE(isModeApply);
-
-  // // signinFacebook
-  // const facebookLogin = async () => {
-  //   try {
-  //     const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
-  //     if (result.isCancelled) {
-  //       console.log('Đăng nhập bị hủy');
-  //     } else {
-  //       const currentProfile = await Profile.getCurrentProfile().then(
-  //         function (currentProfile) {
-  //           if (currentProfile) {
-  //             console.log("Tên người dùng Facebook: " +
-  //               currentProfile.name + " userID: " + currentProfile.userID
-  //             );
-  //             createToken(currentProfile.userID)
-  //           }
-  //         }
-  //       );
-  //     }
-  //   } catch (error) {
-  //     console.log('Lỗi đăng nhập: ', error);
-  //   }
-  // };
-  // //  Google login
-
-
-  // GoogleSignin.configure({
-  //   webClientId: '1004261782493-85h6acr55sfjv0usi1o98s62h6n3c6ev.apps.googleusercontent.com',
-  // });
-
-  // async function onGoogleButtonPress() {
-
-  //   try {
-  //     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-  //     // Get the users ID token
-  //     const { idToken } = await GoogleSignin.signIn();
-
-  //     // Create a Google credential with the token
-  //     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-  //     // Sign-in the user with the credential
-  //     auth().signInWithCredential(googleCredential);
-  //     ToastAndroid.show("User sign in by google successfully" + idToken,ToastAndroid.LONG);
-  //     GoogleSignin.signOut();
-  //   } catch (error) {
-  //     console.log("Function onGoogleButtonPress error: " + error);
-  //   }
-  //   //  Nos laf token nha
-  // }
-
-  // // createToken when logged in facebook
-  // const createToken = async (userID) => {
-  //   const response = await AxiosInstance.post('jwtApi/facebookSignin?id=' + userID);
-  //   if (response.accessToken) {
-  //     console.log('accessToken: ' + response.accessToken);
-  //     await AsyncStorage.setItem('accessToken', response.accessToken)
-  //   }
-  // }
-
-  // // get accessToken from AsyncStorage
-  // const getIemFromAsyncStorage = async (key) => {
-  //   const accessToken = await AsyncStorage.getItem(key)
-  //   if (accessToken) {
-  //     console.log('accessToken from AsyncStorage: ' + accessToken);
-  //   }
-  // }
-
   //signin with mongo DB
   const login = async () => {
     if(!username && !password) ToastAndroid.show("No username or id",ToastAndroid.SHORT)
@@ -162,42 +90,7 @@ const {t} = useTranslation()
             styleButton={{backgroundColor:'black',width:'100%'}}
             styleText={{color:'white'}}
           />
-          {/* <LineWithTextBetween /> */}
-          {/* <View>
-            <SocialSignInButton
-              onPress={() => facebookLogin()}
-              iconName='facebook'
-              iconColor='white'
-              iconSize={25}
-              backgroundColor='#3B5999'
-              borderColor='#3B5999'
-              labelColor='white'
-              label='Continue with Facebook' />
-            <View style={{ height: 15 }} />
-            <SocialSignInButton
-              onPress={() => onGoogleButtonPress()}
-              iconName='google'
-              iconColor='black'
-              iconSize={25}
-              backgroundColor='white'
-              borderColor='#d4d4d4'
-              labelColor='black'
-              label='Continue with Google'
 
-            />
-            <View style={{ height: 15 }} />
-            <TouchableOpacity onPress={() => getIemFromAsyncStorage('accessToken')}>
-              <SocialSignInButton
-                iconName='apple'
-                iconColor='black'
-                iconSize={25}
-                backgroundColor='white'
-                borderColor='#d4d4d4'
-                labelColor='black'
-                label='Continue with Apple'
-              />
-            </TouchableOpacity>
-          </View> */}
         </View>
       </View>
     </Wrapper>
