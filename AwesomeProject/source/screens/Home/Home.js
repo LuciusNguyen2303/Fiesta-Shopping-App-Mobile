@@ -33,7 +33,7 @@ const Home = () => {
         if(categorySelected){
             dispatch(onChangeMainCategory(categorySelected))
             setCategorySelected("")
-            navigation.navigate("FilterProductScreen")
+            navigation.navigate("FilterProductScreen",{category:dataCategory.filter((item)=>{return categorySelected==item._id})[0]})
         }
            
     
@@ -181,7 +181,7 @@ const Home = () => {
                         <View
                             style={{ marginHorizontal: -10,width:width }}
                         >
-                            <Text style={[commonStyles.normalText, { fontSize: 20, fontWeight: 'bold', }]}>{t("Best sold products")}</Text>
+                            <Text style={[commonStyles.normalText, { fontSize: 20, fontWeight: 'bold', marginTop:20}]}>{t("Best sold products")}</Text>
                             {
                                 soldList.length > 0 &&
                                 <ProductList1 layout={"Grid"} data={soldList} horizontal={true} />

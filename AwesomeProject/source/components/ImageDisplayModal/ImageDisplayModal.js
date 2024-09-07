@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, Modal, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MetarialIcon } from '../icon/Material';
 
 const ImageDisplayModal = ({ visible, onClose, imageArray,index }) => {
   const [selectedImage, setSelectedImage] = useState(imageArray[0]);
   useEffect(() => {
-    console.log("arrry",imageArray[index],selectedImage);
     setSelectedImage(imageArray[index])
     
   }, [index])
@@ -22,10 +22,17 @@ const ImageDisplayModal = ({ visible, onClose, imageArray,index }) => {
       <SafeAreaView style={styles.centeredView}>
         <View style={styles.modalView}>
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Text style={styles.textStyle}>X</Text>
+           <MetarialIcon
+            size={30}
+            color={'white'}
+            name={"cancel"}
+            
+           />
           </TouchableOpacity>
           <Image source={{ uri: selectedImage.url }} style={styles.mainImage} />
-          <FlatList
+          {
+            imageArray.length >1 &&
+            <FlatList
             data={imageArray}
             keyExtractor={(item, index) => index.toString()}
             horizontal
@@ -41,6 +48,7 @@ const ImageDisplayModal = ({ visible, onClose, imageArray,index }) => {
               </TouchableOpacity>
             )}
           />
+          }
         </View>
       </SafeAreaView>
     </Modal>

@@ -83,6 +83,7 @@ const DeliveryAddressScreen = () => {
     }
 
     // GET USER 
+
     const getUser = async () => {
         try {
             const addresses = userData.address
@@ -91,7 +92,6 @@ const DeliveryAddressScreen = () => {
                 const defaultAddress = addresses.find((value) => value.isDefault == true)
                 setAddress(defaultAddress)
                 console.log(addresses);
-
             } else {
                 Alert.alert("Warning", "You don't have any address. \nPlease add some.", [
                     {
@@ -115,12 +115,19 @@ const DeliveryAddressScreen = () => {
             if (response.statusCode == 200) {
                 setCard(response.data);
             } else if (response.statusCode == 1000)
-                Alert.alert("You don't have any visa card")
+                Alert.alert("ERROR","You don't have any visa card",[{
+                    text:'Ok',
+                    onPress:()=>navigation.goBack()
+                }])
             else if (response.statusCode == 1001)
-                Alert.alert("You don't have the default card.\n Please choose one in Setting > MyCard")
+                Alert.alert("ERROR","You don't have the default card.\n Please choose one in Setting > MyCard",
+                    [{
+                        text:'Ok',
+                        onPress:()=>navigation.goBack()
+                    }])
 
         } catch (error) {
-            console.log("GET USER ERROR: ", error);
+            console.log("GET DEFAULT CARD ERROR: ", error);
 
         }
     }

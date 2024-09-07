@@ -33,7 +33,6 @@ const ProductDetail = ({ route }) => {
   const [numLines, setNumLines] = useState(3)
   const [imageDisplayVisible, setImageDisplayVisible] = useState(false)
   const [indexImage, setIndexImage] = useState(0)
-  const lorem_ipsum = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Gravida in fermentum et sollicitudin ac orci phasellus egestas tellus. Leo vel fringilla est ullamcorper eget nulla. Mi bibendum neque egestas congue quisque egestas diam in. In vitae turpis massa sed elementum tempus egestas sed. Sed odio morbi quis commodo odio aenean sed. Aenean et tortor at risus viverra. Quam viverra orci sagittis eu volutpat odio facilisis mauris. Id eu nisl nunc mi ipsum faucibus vitae aliquet nec. Nisi lacus sed viverra tellus in hac habitasse platea. Mauris in aliquam sem fringilla ut. Convallis a cras semper auctor neque vitae tempus quam pellentesque. Ipsum a arcu cursus vitae congue mauris rhoncus.";
   const [variationId, setVariationId] = useState(null)
   const [selectedDimension, setSelectedDimension] = useState({})
   const [stock, setStock] = useState(0)
@@ -78,11 +77,9 @@ const ProductDetail = ({ route }) => {
     try {
       const response = await AxiosInstance.get(`productApi/getProductByID?id=${productId}`);
       if (response.result) {
-        console.log(response.data);
 
         setData(response.data)
         getAttributeFromData(response.data)
-        console.log(JSON.stringify(response.data));
       }
 
     } catch (error) {
@@ -94,7 +91,6 @@ const ProductDetail = ({ route }) => {
       const response = await AxiosInstance.get(`productApi/getStockProduct?productId=${data._id}&variationId=${variationId}`)
       if (response.result)
         setStock(Number(response.data[0].stock))
-      console.log(response.data[0]);
     } catch (error) {
       console.log("checkStockProduct: ", error);
     }
@@ -144,7 +140,7 @@ const ProductDetail = ({ route }) => {
     }
   }, [])
   const setStyleBottomNavigion = () => {
-    const style = previousRoute.name == "Home" ? {
+    const style = previousRoute.name == "Home"||"PurchaseScreen" ? {
       display: 'flex',
       backgroundColor: "white", position: 'absolute', borderTopLeftRadius: 30,
       borderTopRightRadius: 30, height: 70, paddingLeft: 30, paddingRight: 30,
@@ -201,7 +197,6 @@ const ProductDetail = ({ route }) => {
       const response = await AxiosInstance.post("cart/add", { addFields: newCart })
       if (response.result)
         ToastAndroid.show("ADD TO CART SUCCESSFULLY", ToastAndroid.SHORT)
-      console.log("Cart", response);
 
     } catch (error) {
       console.log("ADD TO CART ERROR: ", error);

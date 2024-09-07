@@ -12,7 +12,7 @@ import SearchModal from '../ProductSearch/SearchModal'
 import { useDispatch, useSelector } from 'react-redux'
 import { filterSelector, onReset } from '../../redux-store'
 import AxiosInstance from '../../util/AxiosInstance'
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import ShowLoadingDialog from '../../components/LoadingDialog.js/LoadingDialog'
 import { useTranslation } from 'react-i18next'
 const FilterProductScreen = () => {
@@ -28,6 +28,9 @@ const FilterProductScreen = () => {
     const [limit, setLimit] = useState(20)
     const filter = useSelector(filterSelector)
     const navigation = useNavigation()
+    const route =useRoute()
+    const {category}= route.params
+
     const dispatch = useDispatch()
     const onBack = () => {
         navigation.goBack()
@@ -39,7 +42,7 @@ const FilterProductScreen = () => {
 
         return (
             <View style={{ backgroundColor: theme.primary, padding: 2, }}>
-                <Header onBack={onBack}   title={filter.filter.name} styleHeader={{ backgroundColor: theme.primary }} />
+                <Header onBack={onBack} name={category?t("Categories")+": "+category.name:""}  title={filter.filter.name} styleHeader={{ backgroundColor: theme.primary }} />
                 <View style={styleFilterProduct.setting}>
                     <TouchableOpacity
                         style={styleFilterProduct.MiniSetting}

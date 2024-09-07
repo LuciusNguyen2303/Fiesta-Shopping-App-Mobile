@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next'
 import { t } from 'i18next'
 
 const OrderList = () => {
-    const {t}=useTranslation()
+    const { t } = useTranslation()
     const [orderList, setOrderList] = useState([])
     const [page, setPage] = useState(1)
     const [totalPage, setTotalPage] = useState(0)
@@ -35,11 +35,8 @@ const OrderList = () => {
             if (response.statusCode == 200 && page == 1) {
                 setTotalPage(response.pages)
                 setOrderList(response.data)
-
             } else if (response.statusCode == 200 && page > 1) {
-
                 setOrderList([...orderList, ...response.data])
-
             }
 
             setIsLoading(false)
@@ -58,7 +55,18 @@ const OrderList = () => {
         getOrderList()
 
 
-    }, [page,isFocused])
+    }, [page])
+
+    useEffect(() => {
+        const unsubscribe = navigation.addListener("focus", () => {
+            if (page !== 1)
+                setPage(1)
+            else
+                getOrderList()
+        })
+
+        return unsubscribe
+    }, [])
 
     useEffect(() => {
         navigation.getParent()?.setOptions({
@@ -100,34 +108,34 @@ const OrderList = () => {
                 isLoading ?
                     <ShowLoadingDialog isLoading={isLoading} setIsLoading={setIsLoading} />
                     :
-                   
-                    orderList.length>0?
-                    <FlashList
-                    showsVerticalScrollIndicator={false}
-                    ListHeaderComponent={RenderHeader}
-                    ListFooterComponent={isMiniLoading && <Loading />}
-                    data={orderList}
-                    decelerationRate={'fast'}
-                    estimatedItemSize={120}
-                    onEndReached={handleMore}
-                    onEndReachedThreshold={1}
-                    renderItem={({ item, index }) => {
-                        return (
-                            <ItemOrderList
 
-                                item={item}
-                                index={index}
-                            />
-                        )
-                    }}
+                    orderList.length > 0 ?
+                        <FlashList
+                            showsVerticalScrollIndicator={false}
+                            ListHeaderComponent={RenderHeader}
+                            ListFooterComponent={isMiniLoading && <Loading />}
+                            data={orderList}
+                            decelerationRate={'fast'}
+                            estimatedItemSize={120}
+                            onEndReached={handleMore}
+                            onEndReachedThreshold={1}
+                            renderItem={({ item, index }) => {
+                                return (
+                                    <ItemOrderList
 
-                />:<View >
-                    <RenderHeader/>
-                    <Text
-                    style={[styleOrderListScreen.textCenter,styleOrderListScreen.titleItem,{color:"gray"}]}
-                    >{t("No available order")}.</Text>
-                </View>
-                   
+                                        item={item}
+                                        index={index}
+                                    />
+                                )
+                            }}
+
+                        /> : <View >
+                            <RenderHeader />
+                            <Text
+                                style={[styleOrderListScreen.textCenter, styleOrderListScreen.titleItem, { color: "gray" }]}
+                            >{t("No available order")}.</Text>
+                        </View>
+
             }
 
         </Wrapper>
@@ -143,6 +151,8 @@ const ItemOrderList = ({ item, index }) => {
             style={styleOrderListScreen.itemView}
             onPress={() => navigation.navigate('OrderDetail', { orderId: item._id })}
         >
+                        <Text style={[commonStyles.title, styleOrderListScreen.textItem]}>ID: {item._id}</Text>
+
             <Text style={[commonStyles.title, styleOrderListScreen.titleItem]}>{item.shipping.name}</Text>
             <Text style={[commonStyles.normalText, styleOrderListScreen.textItem]}>
                 {t("Address")}: {`${item.shipping.houseNumber} ${item.shipping.street}, ${item.shipping.ward}, ${item.shipping.city}, ${item.shipping.country}`}

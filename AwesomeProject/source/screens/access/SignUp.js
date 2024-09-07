@@ -23,6 +23,7 @@ import Button from '../../components/Button/Button'
 import regex from '../../config/Regex'
 import AxiosInstance from '../../util/AxiosInstance'
 import { useTranslation } from 'react-i18next'
+import { useNavigation } from '@react-navigation/native'
 
 const SignUp = (props) => {
   // Successful dialog State
@@ -41,8 +42,8 @@ const SignUp = (props) => {
       if (response.result) {
         setDialogVisible(!isDialogVisible)
         setTimeout(() => {
-          ToastAndroid.show("Back to Access Screen", 3000)
-        }, 3000);
+          navigation.pop(2)
+        }, 2000);
 
       }
 
@@ -66,7 +67,7 @@ const SignUp = (props) => {
  
   const [isChecked, setIsChecked] = useState(false);
 
-  const { navigation } = props;
+  const navigation = useNavigation();
     
   const checkSignUp = () => {
     const validName = regex.fullnameWithRegex.test(name);
@@ -96,12 +97,19 @@ const SignUp = (props) => {
       console.log("ERROR", "isNameValid", isNameValid, name, "isEmailValid", email.trim(), isEmailValid, "isPasswordValid", isPasswordValid);
     }
   }
+  const onDialogGoBack = ()=>{
+    navigation.goBack()
+  }
 const {t} =useTranslation()
   return (
     <Wrapper>
       <KeyboardAwareScrollView
+        showsVerticalScrollIndicator={false}
         style={[commonStyles.container, { marginTop: 40 }]}>
-        <SuccessfulSignUpDialog onClose={toggleDialog} isVisible={isDialogVisible} />
+        <SuccessfulSignUpDialog
+         onClose={toggleDialog} 
+         isVisible={isDialogVisible} 
+         />
         <ImageBackground resizeMode='cover' source={require('../../assets/images/logo.jpg')} style={{ height: 180 }}>
           <TouchableOpacity
             onPress={() => navigation.goBack()}

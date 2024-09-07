@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "../icon/FontAwesome";
 import cutStringIntoEqualParts from "../CreditCard/AccountNumArgo";
 import { color } from "../../config/ThemeAction";
 import { AppContext } from "../../util/AppContext";
+import Button from "../Button/Button";
 export const MySection = ({ label }) => {
     const { theme } = useContext(AppContext)
     return <Text style={[styles.section, { color: theme.secondary }]}>{label}</Text>
@@ -16,7 +17,7 @@ export const MySection = ({ label }) => {
 
 export const MyTextInput = ({ placeholder, length, onChangeText, style, icon, color }) => {
     const { theme } = useContext(AppContext)
-    
+
     return (
         <View style={styles.container}>
             <TextInput
@@ -90,7 +91,7 @@ export const CheckBox = ({ checked, styleCheckBox, onChange, isDisable }) => {
 
     return (
         <TouchableOpacity
-            disabled={isDisable?isDisable:false}
+            disabled={isDisable ? isDisable : false}
             activeOpacity={0.2}
             onPress={() => onChange(!checked)}
             style={[{ backgroundColor: 'white', borderWidth: 1, borderRadius: 3, width: 17, height: 17, opacity: checked === true ? 1 : 0.5 }, styleCheckBox]}
@@ -126,12 +127,8 @@ export const SuccessfulSignUpDialog = ({ isVisible, onClose }) => {
                         You have successfully registered in out app and start working on it.
                     </Text>
                 </View>
-                <TouchableOpacity
-                    style={[commonStyles.btnAccess_dark, { marginTop: 230 }]}>
-                    <Text style={commonStyles.textBtnAccess_dark}>
-                        Start Shopping
-                    </Text>
-                </TouchableOpacity>
+              
+
             </View>
         </Modal>
     )

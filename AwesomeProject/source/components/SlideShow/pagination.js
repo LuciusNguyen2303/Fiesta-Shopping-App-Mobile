@@ -13,6 +13,7 @@ const Pagination = (props) => {
       {data.map((_, index) => {
         return (
           <View
+          key={index}
           style={[
             enablePagination == true  ? {} : { display: 'none' },
             // { opacity: index === indexP ? 1 : 0.5 },

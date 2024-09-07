@@ -128,6 +128,7 @@ const SettingScreen = () => {
                     'content-type': 'multipart/form-data',
                 },
             })
+            
             if (response.result){
                 console.log("UPDATE SUCCESSFUL");
                 setNewImage(null)
@@ -163,7 +164,7 @@ const SettingScreen = () => {
     return (
         <Wrapper>
             {
-                // userData.image && <ImageDisplayModal imageArray={[userData.image]} visible={visibleModal} onClose={()=>setVisibleModal(false)}/>
+                userData.image && <ImageDisplayModal imageArray={[userData.image]} index={0} visible={visibleModal} onClose={()=>setVisibleModal(false)}/>
             }
             <ScrollView showsVerticalScrollIndicator={false}>
                 <KeyboardAvoidingView>

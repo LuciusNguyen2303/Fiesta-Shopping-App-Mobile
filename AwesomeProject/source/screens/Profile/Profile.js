@@ -67,9 +67,9 @@ const Profile = (props) => {
 
                 {/* PROFILE NAME */}
                 <View style={[StyleProfile.card, StyleProfile.shadow, { flexDirection: 'row', marginTop: 25 }]}>
-                    <ImageBackground imageStyle={{ borderRadius: 10 }} style={StyleProfile.image} source={{ uri: userData.image ? userData.image.url : "https://images.unsplash.com/photo-1514136649217-b627b4b9cfb2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8YmxhY2slMjBhbmQlMjB3aGl0ZSUyMG1vZGVsfGVufDB8fDB8fHww" }} />
+                    <ImageBackground imageStyle={{ borderRadius: 10 }} style={StyleProfile.image} source={userData.image ?{ uri: userData.image.url }:require('../../assets/images/avatar-male.png')} />
                     <View style={[StyleProfile.Para, {}]}>
-                        <Text style={[StyleProfile.boldText, {}]}>{userData.name}</Text>
+                        <Text style={[StyleProfile.boldText, {}]}>{userData.name||"No name"}</Text>
                         <Text style={[StyleProfile.regularText, {}]}>{userData.userName}</Text>
                     </View>
                 </View>

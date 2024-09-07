@@ -41,7 +41,6 @@ const SearchScreen = ({ }) => {
     const [historySearchList, setHistorySearchList] = useState([]);
     const onSubmitText = async (text) => {
         setText(text)
-        console.log(text);
         const set = new Set(historySearchList)
         if (!set.has(text)&&text.length>0) {
             let newArr = [...historySearchList]
@@ -49,7 +48,7 @@ const SearchScreen = ({ }) => {
             setHistorySearchList(newArr)
         }
         dispatch(onChangeName(text))
-        navigation.navigate("FilterProductScreen")
+        navigation.navigate("FilterProductScreen",{category:null})
 
     }
     const onHandleClick = async (item) => {
@@ -57,7 +56,7 @@ const SearchScreen = ({ }) => {
             dispatch(onChangeName(item))
             setText(item)
         }
-        navigation.navigate("FilterProductScreen")
+        navigation.navigate("FilterProductScreen",{category:null})
     }
     const getHistorySearchList = async () => {
         const historyList = await AsyncStorage.getItem('HistoryList')

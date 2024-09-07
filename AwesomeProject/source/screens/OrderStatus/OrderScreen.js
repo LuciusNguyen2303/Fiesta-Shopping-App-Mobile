@@ -86,14 +86,14 @@ const OrderScreen = () => {
         <ScrollView
             showsVerticalScrollIndicator={false}
         >
-            <Wrapper style={{ flex: 1, height: height }}>
+            <Wrapper style={{ flex: 1 }}>
                 <Header
                     onBack={onBack}
                     name={"Order Detail"}
                 />
 
                 {order ?
-                    <View>
+                    <View style={{paddingBottom:20}}>
                         <View style={AppStyles.StyleOrderScreen.cardViewShadow}>
                             < View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                 <MetarialIcon name='payment' size={25} color='black' />
@@ -192,7 +192,8 @@ const OrderScreen = () => {
 }
 const Item = ({ item, id }) => {
 
-
+    console.log(JSON.stringify(item));
+    
     const showVariation = () => {
         let variations = " "
         const dimension = item.productInfo.variation.dimension
@@ -211,7 +212,7 @@ const Item = ({ item, id }) => {
                 productId: item.productId
             })}
             style={[StylePublic.shadow, { borderRadius: 15, flexDirection: 'row', alignItems: 'center', marginVertical: 10, paddingVertical: 10, paddingHorizontal: 5 }]}>
-            <Image style={{ borderRadius: 15, margin: 10, marginRight: 15, width: 80, height: 80, backgroundColor: 'black' }} source={item.productInfo.variation.image.url ? { uri: item.productInfo.variation.image.url } : require('../../assets/images/successful.gif')} />
+            <Image style={{ borderRadius: 15, margin: 10, marginRight: 15, width: 80, height: 80, backgroundColor: 'black' }} source={item.productInfo.variation.subImage ? { uri: item.productInfo.variation.subImage.url } : require('../../assets/images/successful.gif')} />
             <View style={{ width: '68%' }}>
                 <Text
                     style={[commonStyles.normalText, { fontWeight: 'bold', color: 'black', fontSize: 18 }]}

@@ -16,7 +16,6 @@ const cartSlice = createSlice({
             const { id, quantity, isStockSufficient } = action.payload
             const updatedData = state.cartData.map((item, index) => {
                 let newItem = { ...item }
-                console.log("SLICE isStockSufficient ",isStockSufficient);
 
                 if (item._id === id &&typeof isStockSufficient!=='undefined') {
                     
@@ -28,12 +27,12 @@ const cartSlice = createSlice({
                 return newItem;
             })
             state.cartData = updatedData
-            console.log("onUpdateItemInCartChosenData",updatedData);
         },
        
         deleteItemInData: (state, action) => {
-            const id = action.payload
-            state.cartData = state.cartData.filter((item) => { return item._id !== id })
+            const id = action.payload;
+            state.cartData = state.cartData.filter((item) => item._id !== id);
+            
         },
         deleteManyItemsInData: (state, action) => {
             const cartIds = action.payload

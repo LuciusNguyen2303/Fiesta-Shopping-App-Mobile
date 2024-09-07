@@ -19,7 +19,7 @@ const Item = ({ item, id }) => {
     }
     return (
         <View style={[StylePublic.shadow, { borderRadius: 15, flexDirection: 'row', alignItems: 'center', marginVertical: 10,paddingVertical:10,paddingHorizontal:5 }]}>
-            <Image style={{ borderRadius: 15, margin: 10, marginRight: 15, width: 80, height: 80, backgroundColor: 'black' }} source={item.products.variations[0].image.url?{uri:item.products.variations[0].image.url}:require('../../../assets/images/successful.gif')} />
+            <Image style={{ borderRadius: 15, margin: 10, marginRight: 15, width: 80, height: 80, backgroundColor: 'black' }} source={item.products.variations[0].subImage.url?{uri:item.products.variations[0].subImage.url}:require('../../../assets/images/successful.gif')} />
             <View style={{width:'68%'}}>
                 <Text
                     style={[commonStyles.normalText, { fontWeight: 'bold', color: 'black', fontSize: 18 }]}

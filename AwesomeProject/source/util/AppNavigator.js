@@ -153,7 +153,6 @@ const Tab = () => {
 
 const WholeScreen = () => {
     const isLogin = useSelector(isLoginSelector)
-    console.log("APP isLogin ... ", isLogin);
 
     return (
         <StackNavigator.Navigator screenOptions={{ headerShown: false }}>

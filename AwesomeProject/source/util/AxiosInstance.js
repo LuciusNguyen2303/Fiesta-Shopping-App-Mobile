@@ -54,11 +54,22 @@ AxiosInstance.interceptors.response.use(
             ]
             )
 
-        }  else {
-            Alert.alert("ERROR", "SOMETHING WENT WRONG IN APP \n TRY LATER...", [
+        } else if (error.response.status == 400) {
+            Alert.alert("ERROR", error.response.data.message ? error.response.data.message.toUpperCase() :
+                "SOMETHING WRONG WHEN SENT THE REQUEST \n PLEASE TRY LATER"
+                , [
+                    {
+                        text: 'OK',
+                        onPress: () => console.log(error.response.data)
+
+                    }
+                ])
+        } else {
+            Alert.alert("ERROR", "SOMETHING WRONG WHEN SENT THE REQUEST \n PLEASE TRY LATER", [
                 {
                     text: 'OK',
-                    onPress: () => BackHandler.exitApp()
+                    onPress: () => console.log(error.response.data)
+
                 }
             ])
         }
@@ -70,7 +81,6 @@ AxiosInstance.interceptors.response.use(
 AxiosInstance.interceptors.request.use(
     async (config) => {
         const token = await AsyncStorage.getItem('token');
-        console.log("GET TOKEN: ", token);
 
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`;

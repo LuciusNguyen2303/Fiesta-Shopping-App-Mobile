@@ -21,14 +21,12 @@ export const ListCategory = ({ data, style, subcategorySelected, expand, setSubC
         if (subcategoryArray.length > 0 && indexSelected !== null) {
             const newCategoryArr = [...category];
             const newSubcategoryArr = subcategoryArray.map(item => { return { ...item, isSubCategory: true } })
-            console.log(newSubcategoryArr.length);
             setSubCategoryArray(newSubcategoryArr)
             newCategoryArr.splice(indexSelected + 1, 0, ...newSubcategoryArr);
             setCategory(newCategoryArr);
         }
     }, [indexSelected]);
     useEffect(() => {
-        // Cập nhật indexSelected khi danh sách danh mục thay đổi
         if (expand)
             if (((category.length > 0 && indexSelected === null) || subcategoryArray.length == 0) && categorySelected) {
                 setIndexSelected(category.findIndex(item => item._id === categorySelected));
@@ -57,7 +55,6 @@ export const ListCategory = ({ data, style, subcategorySelected, expand, setSubC
                         <TouchableOpacity
                             activeOpacity={0.8}
                             onPress={() => {
-                                console.log(categorySelected == item._id);
 
 
                                 if (typeof item.isSubCategory !== 'undefined') {

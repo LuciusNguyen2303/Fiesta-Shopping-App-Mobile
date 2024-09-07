@@ -19,7 +19,7 @@ import { formatText } from '../../../util/CommonFunction';
 import Header from '../../../components/Header/Header';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { addNewAddress, dataUserSelector, deleteAddress, setDefaultAddress, setUserData, updateAddress } from '../../../redux-store';
+import { addNewAddress, dataUserSelector, deleteAddress, getAddress, setDefaultAddress, setUserData, updateAddress } from '../../../redux-store';
 import { useTranslation } from 'react-i18next';
 const ShippingAddressScreen = () => {
     const userData = useSelector(dataUserSelector)
@@ -66,7 +66,7 @@ const ShippingAddressScreen = () => {
             })
             if (response.result) {
                 ToastAndroid.show("ADD NEW ADDRESS SUCCESSFULLY", ToastAndroid.SHORT)
-                dispatch(addNewAddress(response.data))
+                dispatch(getAddress(response.data.address))
                 setIsOpenAdd(false)
 
             }
@@ -487,7 +487,7 @@ const AddAddressModal = ({ onClose, isOpen, onSubmitAdd }) => {
                         value={street}
                     />
                     <TextInput
-                        placeholder={"house-number-placeholder"}
+                        placeholder={t("house-number-placeholder")}
                         onChangeText={setHouseNumber}
                         style={styleAddressScreen.textInput}
                         value={houseNumber}

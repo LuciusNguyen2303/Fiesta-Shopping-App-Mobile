@@ -30,7 +30,7 @@ const Cart = () => {
     const [page, setPage] = useState(1)
     const [id, setId] = useState("")
     const dispatch = useDispatch()
-    const {t}=useTranslation()
+    const { t } = useTranslation()
     //  Cart data 
     const cartData = useSelector(cartDataSelector)
     const cartChosenData = useSelector(cartChosenDataSelector);
@@ -94,8 +94,7 @@ const Cart = () => {
     useEffect(() => {
         if (isFocused) {
             getCart();
-            console.log(cartData);
-
+            
         } else {
             dispatch(deleteAll())
         }
@@ -108,7 +107,7 @@ const Cart = () => {
                 BackHandler.exitApp();
                 return true; // Ngăn không cho back lại
             };
-            
+
             BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
             return () => {
@@ -179,7 +178,6 @@ const Cart = () => {
 
         if (cartChosenData.length > 0) {
             handleDelay()
-            console.log("HANDLE DELAYY: ", cartChosenData);
 
         }
         else
@@ -300,11 +298,15 @@ const Cart = () => {
                         }
                     </View>
                     <FlashList
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{ paddingBottom: 120 }}
                         data={cartData}
                         onEndReached={() => {
                             if (totalPage > page)
                                 setPage(prev => prev + 1)
                         }}
+                        keyExtractor={(item)=>item._id}
+                        extraData={cartData}
                         onEndReachedThreshold={0.8}
                         renderItem={({ item, index }) => {
                             return (
@@ -331,7 +333,8 @@ const Cart = () => {
     )
 }
 const ItemCart = ({ item }) => {
-    const {t}=useTranslation()
+    
+    const { t } = useTranslation()
     const { theme } = useContext(AppContext)
     const { width } = useWindowDimensions()
     const cartChosenData = useSelector(cartChosenDataSelector);
@@ -358,7 +361,6 @@ const ItemCart = ({ item }) => {
     }
 
     const updateItem = async () => {
-        // console.log("Change quantity", quantity)
         try {
 
             const response = await AxiosInstance.post(`cart/update?cartID=${item._id}`, { updateFields: { quantity: quantity } })
@@ -525,7 +527,7 @@ const ItemCart = ({ item }) => {
                             }
                             setCheck(!check)
                         }} styleCheckBox={styleCart.checkbox} />
-                    <Image style={[styleCart.image, {}]} source={{ uri: variation.image.url }} />
+                    <Image style={[styleCart.image, {}]} source={{ uri: variation.subImage.url }} />
                     <View style={[styleCart.para, { width: '70%' }]}>
                         <View style={{}}>
                             <Text style={[styleCart.title, { color: theme.secondary }]}>{item.products.name}</Text>

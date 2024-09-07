@@ -60,6 +60,10 @@ export const userSlice = createSlice({
             state.dataUser.gender = action.payload;
         },
         //Address
+        getAddress: (state, action) => {
+            const newAddresses = action.payload
+            state.dataUser.address=newAddresses
+        },
         addNewAddress: (state, action) => {
             const newAddress = action.payload
             state.dataUser.address.push(newAddress)
@@ -98,7 +102,7 @@ export const userSlice = createSlice({
         }
     }
 })
-export const { setIsLogin, setIsAppKilled,resetUser, setUserData, setEmail, setImage, setName, setAddress, addNewAddress, updateAddress, setDefaultAddress, setGender, deleteAddress } = userSlice.actions
+export const { setIsLogin, setIsAppKilled,resetUser, setUserData, setEmail, setImage, setName, setAddress, addNewAddress,getAddress, updateAddress, setDefaultAddress, setGender, deleteAddress } = userSlice.actions
 
 export const dataUserSelector = (state) => state.userReducer.dataUser
 export const isLoginSelector = (state) => state.userReducer.isLogin

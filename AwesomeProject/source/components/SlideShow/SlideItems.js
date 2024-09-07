@@ -7,7 +7,11 @@ const SlideItems = (props) => {
   const { index, onClick, item, widthR, flexH, heightRate, widthRate, styleItem, children } = props;
 
   return (
-    <SafeAreaView style={{
+
+    <SafeAreaView 
+    key={index}
+    
+    style={{
       flex: 1,
       height: height * heightRate,
       width: width * widthRate,

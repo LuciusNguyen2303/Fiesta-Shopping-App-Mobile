@@ -34,11 +34,14 @@ const Login = (props) => {
   const login = async () => {
     if(!username && !password) ToastAndroid.show("No username or id",ToastAndroid.SHORT)
     try {
-      const response = await AxiosInstance.post('userApi/login', { userName: username, password: password })
-      console.log('response: ' + JSON.stringify(response));
+      const response = await AxiosInstance.post('userApi/login', { userName: username, cpassword: password })
       if (response.token && response.result === true) {
+        console.log(response.user);
+        
         await AsyncStorage.setItem("token",response.token)
         dispatch(setUserData(response.user))
+        console.log(response.user);
+        
         ToastAndroid.show('Signin Successful', ToastAndroid.SHORT);
         dispatch(setIsLogin(true))
 
