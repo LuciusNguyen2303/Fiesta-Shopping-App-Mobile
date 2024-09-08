@@ -2,8 +2,9 @@ import { StyleSheet, Text, View, Easing, Image, ImageBackground, Animated, Alert
 import React, { useEffect, useRef } from 'react'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
-import { isLoginSelector, setIsAppKilled, setUserData } from '../../redux-store'
+import { isLoginSelector, setIsAppKilled, setIsLogin, setUserData } from '../../redux-store'
 import AxiosInstance from '../../util/AxiosInstance'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const SplashScreen = () => {
     const dispatch = useDispatch()
@@ -42,24 +43,45 @@ const SplashScreen = () => {
 
         } catch (error) {
             console.log("Splash Screen get user error: ", error);
+            if (error.response.status === 499)
+                dispatch(setIsLogin(false))
 
         }
         dispatch(setIsAppKilled(false))
 
     }
-    const isLogin = useSelector(isLoginSelector)
-    useEffect(() => {
-        let timeout = null
-        if (isLogin)
-            getUser()
-        else
-            timeout = setTimeout(() => {
-                dispatch(setIsAppKilled(false))
+    const getLoginStatus = async () => {
+        try {
+            const isLogin = await AsyncStorage.getItem("isLogin")
 
-            }, 2000)
+            return JSON.parse(isLogin)
+        } catch (error) {
+            console.log("getLoginStatus error: ", error);
+
+        }
+    }
+    useEffect(() => {
+        (async () => {
+
+            const isLogin = await getLoginStatus()
+
+            if (isLogin) {
+                dispatch(setIsLogin(true))
+                console.log("Splash screen: ", isLogin, Date.now());
+                getUser()
+            }
+            else {
+                dispatch(setIsLogin(false))
+                timeout = setTimeout(() => {
+                    dispatch(setIsAppKilled(false))
+                }, 2000)
+            }
+
+
+        })()
+
         return () => {
-            if (timeout)
-                clearTimeout(timeout)
+
         }
     }, [])
 

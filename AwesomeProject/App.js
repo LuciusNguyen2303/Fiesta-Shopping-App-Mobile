@@ -11,6 +11,7 @@ import {
   Text,
   useColorScheme,
   View,
+  ToastAndroid,
 } from 'react-native';
 import { FONTS } from './source/assets/Constants';
 import {
@@ -42,8 +43,8 @@ import { STRIPE_PUBLIC_KEY } from '@env'
 import Multi from './source/screens/XXX';
 import { ThemeContext } from './source/util/ThemeProvider';
 import SignUp from './source/screens/access/SignUp';
-import { Provider } from 'react-redux';
-import { setIsAppKilled, store } from './source/redux-store';
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import { isLoginSelector, setIsAppKilled, setIsLogin, store } from './source/redux-store';
 import MyCards from './source/screens/Profile/MyCreditCards/MyCards';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNetInfo } from '@react-native-community/netinfo';
@@ -52,48 +53,66 @@ import SplashScreen from 'react-native-splash-screen';
 
 const App = () => {
   LogBox.ignoreAllLogs();
-  const netInfo= useNetInfo()
-
-// Language 
-const changeLanguage = async (lng) => {
-  i18next.changeLanguage(lng)
-    .then(async () => await AsyncStorage.setItem("default-language", lng))
-    .catch(error => console.log("Error:", error));
-}
-const checkLanguage = async () => {
-  const defaultLanguageFromStorage = await AsyncStorage.getItem("default-language")
-  if (defaultLanguageFromStorage !== null) {
-    changeLanguage(defaultLanguageFromStorage);
-
-  } else {
-    changeLanguage("en");
+  const netInfo = useNetInfo()
+  // const isLogin = useSelector(isLoginSelector)
+  // Language 
+  const changeLanguage = async (lng) => {
+    i18next.changeLanguage(lng)
+      .then(async () => await AsyncStorage.setItem("default-language", lng))
+      .catch(error => console.log("Error:", error));
   }
-}
+ 
+  const saveIsLogin = async () => {
+    try {
+      const isLogin= store.getState().userReducer.isLogin
+      console.log("isLoginValue: ",isLogin,Date.now());
+
+      await AsyncStorage.setItem("isLogin", JSON.stringify(isLogin))
+    } catch (error) {
+      console.log("Get isLogin failed: ", error);
+
+    }
+  }
+  const tokenExpiredNotification= ()=>{
+    const {isLogin,isAppKilled}= store.getState().userReducer
+    if(!isLogin&&!isAppKilled)
+      ToastAndroid.show("Token Expired...",ToastAndroid.BOTTOM)
+  }
+  const checkLanguage = async () => {
+    const defaultLanguageFromStorage = await AsyncStorage.getItem("default-language")
+    if (defaultLanguageFromStorage !== null) {
+      changeLanguage(defaultLanguageFromStorage);
+
+    } else {
+      changeLanguage("en");
+    }
+  }
   // Check app active.
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   useEffect(() => {
+
+    // Token expired notification 
+    tokenExpiredNotification()
     SplashScreen.hide()
     const subscription = AppState.addEventListener('change', async (nextAppState) => {
-
       if (
         // appState.current.match(/background/) &&
         nextAppState === 'active'
       ) {
-        console.log("Connection", netInfo.isConnected );
-
+        // setIsLogin 
         checkLanguage()
         const lastActiveTime = await getLastActiveTime()
         const currentTime = new Date().getTime();
         const timeElapsed = currentTime - lastActiveTime;
 
-        if (timeElapsed > 20*60*1000){
+        if (timeElapsed > 20 * 60 * 1000) {
           store.dispatch(setIsAppKilled(true))
-          console.log(timeElapsed.toString(),timeElapsed > 3000);
+          console.log(timeElapsed.toString(), timeElapsed > 3000);
 
         }
-        else{
-          console.log(timeElapsed.toString(),timeElapsed > 3000);
+        else {
+          console.log(timeElapsed.toString(), timeElapsed > 3000);
 
           store.dispatch(setIsAppKilled(false))
 
@@ -102,8 +121,9 @@ const checkLanguage = async () => {
         console.log('App has come to the foreground!');
       } else if (nextAppState === 'background') {
         await saveLastActiveTime()
+        await saveIsLogin()
         console.log('App has not come to the foreground!');
-        console.log("Connection", netInfo.isConnected );
+        console.log("Connection", netInfo.isConnected);
 
       }
 

@@ -2,7 +2,7 @@ import axios from "axios";
 import { useContext } from "react";
 import { AppContext, useAppContext } from "./AppContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Alert, BackHandler } from "react-native";
+import { Alert, BackHandler, ToastAndroid } from "react-native";
 import { setIsAppKilled, setIsLogin, store } from "../redux-store";
 import NetInfo from "@react-native-community/netinfo";
 const AxiosInstance = axios.create({
@@ -21,7 +21,6 @@ AxiosInstance.interceptors.response.use(
             const unsubscribe = NetInfo.addEventListener(async (state) => {
                 if (state.isConnected) {
                     const retryResponse = await AxiosInstance(originalRequest);
-                    console.log(retryResponse.data);
 
                     return retryResponse.data;
                 }
@@ -46,14 +45,12 @@ AxiosInstance.interceptors.response.use(
                 return Promise.reject(retryError);
             }
         } else if (error.response.status === 499) {
-            Alert.alert("HELOOO", "Your session has timed-out.".toUpperCase(), [
-                {
-                    text: "OKAYYY",
-                    onPress: () => store.dispatch(setIsLogin(false))
-                }
-            ]
-            )
+            const isLogin = store.getState().userReducer.isLogin
+            if (isLogin){
+                store.dispatch(setIsLogin(false))
+                ToastAndroid.show("YOUR SESSION TIMED OUT",ToastAndroid.SHORT)
 
+            }
         } else if (error.response.status == 400) {
             Alert.alert("ERROR", error.response.data.message ? error.response.data.message.toUpperCase() :
                 "SOMETHING WRONG WHEN SENT THE REQUEST \n PLEASE TRY LATER"
